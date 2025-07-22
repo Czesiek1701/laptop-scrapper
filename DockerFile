@@ -1,13 +1,13 @@
-# 1. Etap budowy: budujemy JAR z Mavenem
+# Etap 1: Budowanie aplikacji
 FROM maven:3.8.4-openjdk-17 AS build
 WORKDIR /app
 COPY pom.xml mvnw .mvn/ src/
 RUN chmod +x mvnw
 RUN ./mvnw clean package -DskipTests
 
-# 2. Etap uruchomienia: tworzysz obraz do Deploy
+# Etap 2: Uruchamianie aplikacji
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
-EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
+EXPOSE 8080
