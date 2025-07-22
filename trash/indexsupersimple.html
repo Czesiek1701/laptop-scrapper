@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <title>Lista laptopów</title>
+</head>
+<body>
+<h1>Laptopy ze scrapera</h1>
+<ul id="laptopList">Ładowanie...</ul>
+
+<script>
+    async function fetchLaptops() {
+        try {
+            const response = await fetch('/laptops');
+            if (!response.ok) throw new Error('Błąd HTTP: ' + response.status);
+
+            const laptops = await response.json();
+
+            const list = document.getElementById('laptopList');
+            list.innerHTML = ''; // czyścimy napis "Ładowanie..."
+
+            laptops.forEach(laptop => {
+                const li = document.createElement('li');
+                li.textContent = laptop;
+                list.appendChild(li);
+            });
+        } catch (err) {
+            console.error(err);
+            document.getElementById('laptopList').textContent = 'Błąd pobierania danych';
+        }
+    }
+
+    fetchLaptops();
+</script>
+</body>
+</html>
