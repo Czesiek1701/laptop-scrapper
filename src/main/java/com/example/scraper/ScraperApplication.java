@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ScraperApplication {
 
     public static void main(String[] args) {
+        System.setProperty("webdriver.gecko.driver", "/usr/local/bin/geckodriver");
+
         SpringApplication.run(ScraperApplication.class, args);
     }
 

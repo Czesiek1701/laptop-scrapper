@@ -5,6 +5,10 @@ COPY . .
 RUN chmod +x ./mvnw
 RUN MAVEN_CONFIG="" ./mvnw clean package -DskipTests
 
+COPY webdrivers/geckodriver /usr/local/bin/geckodriver
+RUN chmod +x /usr/local/bin/geckodriver
+
+
 # Etap uruchomienia
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
