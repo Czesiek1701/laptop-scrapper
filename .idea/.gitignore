@@ -4,7 +4,7 @@
 /out/
 
 # Maven
-/target/
+#/target/
 
 # OS files
 .DS_Store
