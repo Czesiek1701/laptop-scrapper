@@ -1,12 +1,12 @@
-# 1. Build stage
-FROM maven:3.8.6-openjdk-17 AS build
+# 1. Etap budowy: budujemy JAR z Mavenem
+FROM maven:3.8.4-openjdk-17 AS build
 WORKDIR /app
 COPY pom.xml mvnw .mvn/ src/
 RUN chmod +x mvnw
 RUN ./mvnw clean package -DskipTests
 
-# 2. Runtime stage
-FROM openjdk:17-jdk-slim
+# 2. Etap uruchomienia: tworzysz obraz do Deploy
+FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
