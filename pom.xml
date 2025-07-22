@@ -40,14 +40,14 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- H2 Database (runtime) -->
+        <!-- H2 Database -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Jsoup -->
+        <!-- Jsoup for HTML parsing -->
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
@@ -61,7 +61,7 @@
             <version>4.21.0</version>
         </dependency>
 
-        <!-- Testy -->
+        <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -71,14 +71,21 @@
 
     <build>
         <plugins>
-            <!-- Plugin Spring Boot do pakowania -->
+            <!-- Spring Boot Plugin: pakowanie aplikacji -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring.boot.version}</version> <!-- Added version -->
+                <version>${spring.boot.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
-            <!-- Plugin do kompilacji Javy -->
+            <!-- Kompilator Javy -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -90,11 +97,11 @@
             </plugin>
         </plugins>
     </build>
+
     <pluginRepositories>
         <pluginRepository>
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
         </pluginRepository>
     </pluginRepositories>
-
 </project>
