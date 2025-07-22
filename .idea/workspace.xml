@@ -5,21 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a6c9c13e-d2a9-4557-86ac-6028a313c8d1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/ScraperApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/ScraperApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/Main/Java/App.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/MavenWrapperDownloader$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MavenWrapperDownloader$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/MavenWrapperDownloader.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MavenWrapperDownloader.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/LaptopController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/LaptopScraper.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/ScraperApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/scraper/ScraperApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/ScraperRunner.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/service/LauremScraperService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT.jar.original" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
