@@ -8,11 +8,6 @@ RUN MAVEN_CONFIG="" ./mvnw clean package -DskipTests
 COPY webdrivers/geckodriver /usr/local/bin/geckodriver
 RUN chmod +x /usr/local/bin/geckodriver
 
-RUN wget -O geckodriver.tar.gz https://github.com/mozilla/geckodriver/releases/download/v0.33.0/geckodriver-v0.33.0-linux64.tar.gz \
-  && tar -xzf geckodriver.tar.gz \
-  && mv geckodriver /usr/local/bin/geckodriver \
-  && chmod +x /usr/local/bin/geckodriver
-
 
 # Etap uruchomienia
 FROM eclipse-temurin:17-jdk-alpine
