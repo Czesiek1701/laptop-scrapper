@@ -14,10 +14,11 @@ import java.util.List;
 public class LaptopScraper {
 
     public List<String> getLaptops() {
+
         List<String> laptops = new ArrayList<>();
 
         // Ustaw ścieżkę do geckodriver.exe
-        System.setProperty("webdriver.gecko.driver", "C:\\webdrivers\\geckodriver.exe");
+        System.setProperty("webdriver.gecko.driver", "/usr/local/bin/geckodriver");
 
         FirefoxOptions options = new FirefoxOptions();
         options.addArguments("--headless"); // Opcjonalnie: uruchom w tle, bez otwartego okna
