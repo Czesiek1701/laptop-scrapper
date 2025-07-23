@@ -1,22 +1,21 @@
-# Etap budowania
-FROM maven:3.8.4-openjdk-17 AS build
+# --- 1. Etap build: kompilacja aplikacji do JAR-a
+FROM maven:3.8.6-openjdk-17-slim AS build
 WORKDIR /app
-COPY . .
-RUN chmod +x ./mvnw
-RUN MAVEN_CONFIG="" ./mvnw clean package -DskipTests
 
-COPY webdrivers/geckodriver /usr/local/bin/geckodriver
-RUN chmod +x /usr/local/bin/geckodriver
+COPY pom.xml .
+COPY src ./src
 
+RUN mvn clean package -DskipTests
 
-# Etap uruchomienia
+# --- 2. Etap runtime: uruchomienie gotowego JAR-a
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
+
+# Kopiujemy zbudowany plik JAR
 COPY --from=build /app/target/*.jar app.jar
-COPY webdrivers/geckodriver /usr/local/bin/geckodriver
-RUN chmod +x /usr/local/bin/geckodriver
 
+# Dokumentacyjnie deklarujemy port, pod którym nasłuchuje aplikacja
+EXPOSE 10000
 
-# Render dynamicznie przypisuje port, więc musimy go uwzględnić
-EXPOSE 8080
+# Uruchamiamy aplikację
 ENTRYPOINT ["java", "-jar", "app.jar"]
