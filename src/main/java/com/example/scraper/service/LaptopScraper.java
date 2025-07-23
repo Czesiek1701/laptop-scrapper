@@ -18,7 +18,6 @@ public class LaptopScraper {
         List<String> laptops = new ArrayList<>();
 
         try {
-            // Ustaw ścieżkę do geckodriver.exe dynamicznie
             String os = System.getProperty("os.name").toLowerCase();
             if (os.contains("win")) {
                 System.setProperty("webdriver.gecko.driver", "C:\\webdrivers\\geckodriver.exe");
@@ -26,36 +25,27 @@ public class LaptopScraper {
                 System.setProperty("webdriver.gecko.driver", "/usr/local/bin/geckodriver");
             }
 
-            // Sprawdź, czy plik geckodriver istnieje
             String driverPath = System.getProperty("webdriver.gecko.driver");
             if (!new File(driverPath).exists()) {
-                System.out.println("❌ Nie znaleziono geckodriver: " + driverPath);
+                System.out.println("Nie znaleziono geckodriver: " + driverPath);
                 return laptops;
             }
 
             FirefoxOptions options = new FirefoxOptions();
-            options.addArguments("--headless"); // uruchom bez okna
+            options.addArguments("--headless");
 
             WebDriver driver = new FirefoxDriver(options);
-
             try {
                 driver.get("https://laurem.pl/pol_m_Laptopy-100.html");
-
                 List<WebElement> products = driver.findElements(By.cssSelector("a.product-name"));
 
                 for (WebElement product : products) {
                     String name = product.getText();
                     String link = product.getAttribute("href");
-
-                    System.out.println("Laptop: " + name);
-                    System.out.println("Link: " + link);
-                    System.out.println("---------------------------");
-
                     laptops.add(name + " -> " + link);
                 }
-
             } finally {
-                driver.quit(); // zamknij przeglądarkę
+                driver.quit();
             }
 
         } catch (Exception e) {
