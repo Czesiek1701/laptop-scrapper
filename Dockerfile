@@ -1,5 +1,5 @@
 # --- 1. Etap build: kompilacja aplikacji do JAR-a
-FROM maven:3.8.6-openjdk-17-slim AS build
+FROM maven:3.8.7-openjdk-17-slim AS build
 WORKDIR /app
 
 COPY pom.xml .
@@ -11,11 +11,8 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
-# Kopiujemy zbudowany plik JAR
 COPY --from=build /app/target/*.jar app.jar
 
-# Dokumentacyjnie deklarujemy port, pod którym nasłuchuje aplikacja
 EXPOSE 10000
 
-# Uruchamiamy aplikację
 ENTRYPOINT ["java", "-jar", "app.jar"]
