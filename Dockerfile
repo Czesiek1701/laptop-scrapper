@@ -13,8 +13,10 @@ RUN chmod +x /usr/local/bin/geckodriver
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
+COPY webdrivers/geckodriver /usr/local/bin/geckodriver
+RUN chmod +x /usr/local/bin/geckodriver
+
 
 # Render dynamicznie przypisuje port, więc musimy go uwzględnić
-ENV PORT=8080
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
