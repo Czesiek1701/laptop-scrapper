@@ -20,7 +20,7 @@ public class LaptopScraper {
             // 1. Pobierz i sparsuj HTML
             Document doc = Jsoup.connect(URL)
                     .userAgent("Mozilla/5.0")
-                    .timeout(10_000)
+                    .timeout(30_000)
                     .get();
 
             // 2. Wyciągnij nazwy i linki
