@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a6c9c13e-d2a9-4557-86ac-6028a313c8d1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/controller/LaptopController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/controller/LaptopController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/runner/ScraperRunner/ScraperRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/runner/ScraperRunner/ScraperRunner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,9 +48,9 @@
       <recent name="C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\resources\recources\static" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\grzes\IdeaProjects\laptop-scrapper\trash" />
       <recent name="C:\Users\grzes\IdeaProjects\laptop-scrapper\webdrivers" />
       <recent name="C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\resources\static" />
-      <recent name="C:\Users\grzes\IdeaProjects\laptop-scrapper\trash" />
     </key>
   </component>
   <component name="RunManager">

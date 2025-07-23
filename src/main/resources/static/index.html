@@ -24,7 +24,7 @@
 
 <script>
     document.getElementById("loadBtn").addEventListener("click", () => {
-      fetch('/laptops')
+      fetch('/api/laptops')
         .then(response => response.json())
         .then(laptops => {
           const list = document.getElementById("laptopList");
