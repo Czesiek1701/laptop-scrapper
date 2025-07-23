@@ -1,5 +1,5 @@
 # --- 1. Etap build: kompilacja aplikacji do JAR-a
-FROM maven:3.8.6-openjdk-17 AS build
+FROM maven:3.9.1-jdk-17-slim AS build
 WORKDIR /app
 
 COPY pom.xml .
