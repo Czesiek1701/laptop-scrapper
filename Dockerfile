@@ -1,5 +1,5 @@
 # --- 1. Etap build: kompilacja aplikacji do JAR-a
-FROM maven:3.9.1-jdk-17-slim AS build
+FROM maven:3.8.4-jdk-17 AS build
 WORKDIR /app
 
 COPY pom.xml .
@@ -11,8 +11,3 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
-COPY --from=build /app/target/*.jar app.jar
-
-EXPOSE 10000
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
