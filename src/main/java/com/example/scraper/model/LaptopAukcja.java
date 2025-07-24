@@ -1,4 +1,8 @@
+
+
 package com.example.scraper.model;
+
+import com.example.scraper.model.LaptopAukcja;
 
 public record LaptopAukcja(
         String id,

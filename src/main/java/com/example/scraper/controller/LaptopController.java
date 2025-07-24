@@ -22,10 +22,12 @@ public class LaptopController {
     @GetMapping("/laptops")
     public List<LaptopAukcja> getLaptops() {
         try {
+//            System.out.println("🔐 Zmienna SPRING_DATASOURCE_PASSWORD: " + System.getenv("SPRING_DATASOURCE_PASSWORD"));
             return scraper.getLaptops();
         } catch (Exception e) {
             e.printStackTrace();
             return Collections.emptyList();
         }
+
     }
 }

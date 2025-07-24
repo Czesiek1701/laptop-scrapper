@@ -2,6 +2,9 @@ C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\se
 C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\ScraperApplication.java
 C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\Main\Java\App.java
 C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\controller\LaptopController.java
+C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\controller\LaptopJPAController.java
+C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\repository\LaptopAukcjaRepository.java
 C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\model\LaptopAukcja.java
 C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\MavenWrapperDownloader.java
 C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\service\LauremScraperService.java
+C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\model\LaptopAukcjaJPA.java
