@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Laptopy</title>
-    <!-- Bootstrap CSS CDN -->
     <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -12,33 +11,83 @@
 </head>
 <body>
 <div class="container mt-4">
-    <h1 class="mb-4">Lista laptopów</h1>
+    <h1 class="mb-4">📋 Lista laptopów</h1>
 
-    <button id="loadBtn" class="btn btn-primary mb-3">Załaduj laptopy</button>
+    <button id="loadBtn" class="btn btn-primary mb-3">🔄 Załaduj laptopy</button>
 
-    <ul id="laptopList" class="list-group"></ul>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="laptopTable">
+            <thead class="table-dark">
+            <tr>
+                <th>Nazwa</th>
+                <th>Producent</th>
+                <th>Model</th>
+                <th>Stan</th>
+                <th>RAM</th>
+                <th>Typ dysku</th>
+                <th>Rozmiar dysku</th>
+                <th>Model CPU</th>
+                <th>Liczba rdzeni</th>
+                <th>Taktowanie CPU</th>
+                <th>Typ ekranu</th>
+                <th>Rozmiar ekranu</th>
+                <th>Rozdzielczość</th>
+                <th>Ekran składany</th>
+                <th>Ekran dotykowy</th>
+                <th>Grafika</th>
+                <th>System</th>
+                <th>Link</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
 
-<!-- Bootstrap JS Bundle (z Popper) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    function formatValue(value, unit = "") {
+      if (!value || value.trim() === "" || value === "N/A") return "-";
+      return unit ? `${value} ${unit}` : value;
+    }
+
     document.getElementById("loadBtn").addEventListener("click", () => {
-      fetch('/api/laptops')
+      fetch("/api/laptops")
         .then(response => response.json())
         .then(laptops => {
-          const list = document.getElementById("laptopList");
-          list.innerHTML = ""; // wyczyść listę
+          const tableBody = document.querySelector("#laptopTable tbody");
+          tableBody.innerHTML = "";
 
           laptops.forEach(item => {
-            const li = document.createElement("li");
-            li.className = "list-group-item";
-            li.textContent = item;
-            list.appendChild(li);
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+              <td>${formatValue(item.name)}</td>
+              <td>${formatValue(item.manufacturer)}</td>
+              <td>${formatValue(item.model)}</td>
+              <td>${formatValue(item.condition)}</td>
+              <td>${formatValue(item.ramAmount, "GB")}</td>
+              <td>${formatValue(item.diskType)}</td>
+              <td>${formatValue(item.diskSize, "GB")}</td>
+              <td>${formatValue(item.cpuModel)}</td>
+              <td>${formatValue(item.cpuCores)}</td>
+              <td>${formatValue(item.cpuFrequencyGHz, "GHz")}</td>
+              <td>${formatValue(item.screenType)}</td>
+              <td>${formatValue(item.screenSizeInches, "”")}</td>
+              <td>${formatValue(item.resolution)}</td>
+              <td>${formatValue(item.foldingScreen)}</td>
+              <td>${formatValue(item.touchScreen)}</td>
+              <td>${formatValue(item.graphics)}</td>
+              <td>${formatValue(item.operatingSystem)}</td>
+              <td><a href="${item.auctionPage}" target="_blank">Zobacz</a></td>
+            `;
+
+            tableBody.appendChild(row);
           });
         })
         .catch(err => {
-          alert("Błąd pobierania laptopów: " + err);
+          alert("❌ Błąd pobierania laptopów: " + err);
         });
     });
 </script>

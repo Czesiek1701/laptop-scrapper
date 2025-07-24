@@ -7,18 +7,20 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collections;
 import java.util.List;
 
+import com.example.scraper.model.LaptopAukcja;
+
 @RestController
 @RequestMapping("/api")
 public class LaptopController {
 
-    private final LaptopScraper scraper;
+    private final LaptopScraperLaurem scraper;
 
-    public LaptopController(LaptopScraper scraper) {
+    public LaptopController(LaptopScraperLaurem scraper) {
         this.scraper = scraper;
     }
 
     @GetMapping("/laptops")
-    public List<String> getLaptops() {
+    public List<LaptopAukcja> getLaptops() {
         try {
             return scraper.getLaptops();
         } catch (Exception e) {
