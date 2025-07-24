@@ -1,6 +1,7 @@
 com\example\scraper\ScraperApplication.class
+com\example\scraper\LaptopScraperLaurem.class
+com\example\scraper\model\LaptopAukcja.class
 com\example\scraper\LaptopController.class
-com\example\scraper\LaptopScraper.class
 Main\Java\App.class
 com\example\scraper\service\LauremScraperService.class
 MavenWrapperDownloader$1.class
