@@ -17,6 +17,8 @@ public class LaptopAukcjaJPA {
     private Long id;
 
     private String auctionPage;
+
+    private boolean completed;
     private String manufacturer;
     private String model;
     private String auctionTitle;
@@ -56,6 +58,14 @@ public class LaptopAukcjaJPA {
 
     public void setAuctionPage(String auctionPage) {
         this.auctionPage = auctionPage;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 
     public String getManufacturer() {

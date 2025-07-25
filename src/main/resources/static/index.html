@@ -53,7 +53,7 @@
     }
 
     document.getElementById("loadBtn").addEventListener("click", () => {
-      fetch("/api/laptops")
+      fetch("/api/laptops/scrap")
         .then(response => response.json())
         .then(laptops => {
           const tableBody = document.querySelector("#laptopTable tbody");

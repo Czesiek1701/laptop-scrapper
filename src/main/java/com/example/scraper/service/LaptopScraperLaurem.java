@@ -1,17 +1,19 @@
-package com.example.scraper;
+package com.example.scraper.service;
 
 import com.example.scraper.model.LaptopAukcja;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Component
+@Service
 public class LaptopScraperLaurem {
 
     private static final String URL = "https://laurem.pl/pol_m_Laptopy-100.html";
@@ -59,7 +61,7 @@ public class LaptopScraperLaurem {
             products.forEach(el -> {
                 String name = el.text();
                 String link = el.absUrl("href");
-                String id = "00001";
+                String id = "00000";
 
                 LaptopAukcja laptop = new LaptopAukcja(
                         id,
