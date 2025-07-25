@@ -3,6 +3,7 @@ com\example\scraper\ScraperApplication.class
 com\example\scraper\repository\LaptopAukcjaRepository.class
 com\example\scraper\model\LaptopAukcja.class
 com\example\scraper\LaptopController.class
+com\example\scraper\controller\HelloController.class
 com\example\scraper\service\LauremScraperService.class
 com\example\scraper\LaptopScraperLaurem.class
 Main\Java\App.class
