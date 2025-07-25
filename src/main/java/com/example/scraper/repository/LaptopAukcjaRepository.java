@@ -13,5 +13,8 @@ import org.springframework.stereotype.Repository;
 public interface LaptopAukcjaRepository extends JpaRepository<LaptopAukcjaJPA, Long> {
 
     Optional<LaptopAukcjaJPA> findFirstByOrderByIdAsc();
+
+    boolean existsByAuctionPage(String auctionPage);
+
 }
 

@@ -16,6 +16,7 @@ public class LaptopAukcjaJPA {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "auctionpage", unique = true, nullable = false)
     private String auctionPage;
 
     private boolean completed;

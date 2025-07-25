@@ -44,7 +44,7 @@ public class LaptopController {
                 entity.setTitle(laptop.name());
                 entity.setCompleted(false);
                 return entity;
-            }).toList();
+            }).filter(entity -> !repo.existsByAuctionPage(entity.getAuctionPage())).toList();
 
             repo.saveAll(entities);
 
