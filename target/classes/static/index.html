@@ -13,7 +13,7 @@
 <div class="container mt-4">
     <h1 class="mb-4">📋 Lista laptopów</h1>
 
-    <button id="loadBtn" class="btn btn-primary mb-3">🔄 Załaduj laptopy</button>
+    <button id="loadBtn" class="btn btn-primary mb-3">🔄 Aktualizuj listę</button>
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover table-striped" id="laptopTable">
@@ -47,22 +47,26 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // Funkcja formatująca wartości (np. dodaje jednostki, zastępuje "N/A")
     function formatValue(value, unit = "") {
       if (!value || value.trim() === "" || value === "N/A") return "-";
       return unit ? `${value} ${unit}` : value;
     }
 
+    // Obsługa kliknięcia przycisku "Załaduj laptopy"
     document.getElementById("loadBtn").addEventListener("click", () => {
-      fetch("/api/laptops/scrap")
+      fetch("/api/laptops/scrap") // Pobierz dane z backendu
         .then(response => response.json())
         .then(laptops => {
-          const tableBody = document.querySelector("#laptopTable tbody");
-          tableBody.innerHTML = "";
+          const tbody = document.querySelector("#laptopTable tbody");
+
+          tbody.innerHTML = ""; // Wyczyść poprzednie dane z tabeli
 
           laptops.forEach(item => {
-            const row = document.createElement("tr");
+            const tr = document.createElement("tr"); // Nowy wiersz
 
-            row.innerHTML = `
+            // Wypełnij komórki danymi laptopa
+            tr.innerHTML = `
               <td>${formatValue(item.name)}</td>
               <td>${formatValue(item.manufacturer)}</td>
               <td>${formatValue(item.model)}</td>
@@ -83,13 +87,60 @@
               <td><a href="${item.auctionPage}" target="_blank">Zobacz</a></td>
             `;
 
-            tableBody.appendChild(row);
+            tbody.appendChild(tr); // Dodaj wiersz do tabeli
           });
         })
         .catch(err => {
-          alert("❌ Błąd pobierania laptopów: " + err);
+          alert("Błąd pobierania laptopów: " + err); // Obsługa błędów
         });
     });
+
+    // loader z bazy
+    function loadFromDB() {
+      try {
+        const res = await fetch('/api/laptops/readfromDB');
+        const laptops = await res.json();
+        const tbody = document.querySelector('#laptopTable tbody');
+        tbody.innerHTML = '';
+
+        if (!laptops.length) {
+          tbody.innerHTML = '<tr><td colspan="18">Brak danych</td></tr>';
+          return;
+        }
+
+        laptops.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${formatValue(item.name)}</td>
+            <td>${formatValue(item.manufacturer)}</td>
+            <td>${formatValue(item.model)}</td>
+            <td>${formatValue(item.condition)}</td>
+            <td>${formatValue(item.ramAmount, 'GB')}</td>
+            <td>${formatValue(item.diskType)}</td>
+            <td>${formatValue(item.diskSize, 'GB')}</td>
+            <td>${formatValue(item.cpuModel)}</td>
+            <td>${formatValue(item.cpuCores)}</td>
+            <td>${formatValue(item.cpuFrequencyGHz, 'GHz')}</td>
+            <td>${formatValue(item.screenType)}</td>
+            <td>${formatValue(item.screenSizeInches, '”')}</td>
+            <td>${formatValue(item.resolution)}</td>
+            <td>${formatValue(item.foldingScreen)}</td>
+            <td>${formatValue(item.touchScreen)}</td>
+            <td>${formatValue(item.graphics)}</td>
+            <td>${formatValue(item.operatingSystem)}</td>
+            <td><a href="${item.auctionPage}" target="_blank">Zobacz</a></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        alert('Błąd pobierania laptopów: ' + err);
+      }
+    }
+
+    loadFromDB();
+
 </script>
+
+
 </body>
 </html>

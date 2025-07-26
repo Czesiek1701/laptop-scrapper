@@ -1,20 +1,21 @@
-package com.example.scraper;
+package com.example.scraper.controller;
 
-import jakarta.transaction.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
-
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.example.scraper.model.LaptopAukcja;
 import com.example.scraper.model.LaptopAukcjaJPA;
-import com.example.scraper.service.LaptopScraperLaurem;
 import com.example.scraper.repository.LaptopAukcjaRepository;
+
+
+import java.util.Collections;
+import com.example.scraper.service.LaptopScraperLaurem;
 
 
 @RestController
@@ -94,6 +95,35 @@ public class LaptopController {
         System.out.println("Zapis zakończony");
 
         return "Laptopy zapisane do bazy: " + entities.size();
+    }
+
+
+    @Transactional(readOnly = true)
+    @GetMapping("/laptops/readfromDB")
+    public List<LaptopAukcja> readFromDB() {
+        return repo.findAll().stream()
+            .map(entity -> new LaptopAukcja(
+                    String.valueOf(entity.getId()),
+                    entity.getAuctionPage(),         // link do aukcji
+                    entity.getAuctionTitle(),        // tytuł aukcji
+                    entity.getManufacturer(),        // producent
+                    entity.getModel(),               // model
+                    entity.getItemCondition(),       // stan
+                    entity.getRamAmount(),           // RAM
+                    entity.getDiskType(),            // typ dysku
+                    entity.getDiskSize(),            // pojemność dysku
+                    entity.getCpuModel(),            // CPU
+                    entity.getCpuFrequencyGHz(),     // taktowanie
+                    entity.getCpuCores(),            // liczba rdzeni
+                    entity.getScreenType(),          // typ ekranu
+                    entity.getFoldingScreen(),       // ekran składany
+                    entity.getTouchScreen(),         // ekran dotykowy
+                    entity.getScreenSizeInches(),    // przekątna
+                    entity.getResolution(),          // rozdzielczość
+                    entity.getGraphics(),            // grafika
+                    entity.getOperatingSystem()      // system operacyjny
+            ))
+            .toList();
     }
 
 }
