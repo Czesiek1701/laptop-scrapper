@@ -5,6 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -124,6 +127,46 @@ public class LaptopController {
                     entity.getOperatingSystem()      // system operacyjny
             ))
             .toList();
+    }
+
+
+    /**
+     * GET /api/laptop?url={productUrl}
+     * Zwraca bezpośrednio LaptopAukcja (status 200 OK domyślnie).
+     */
+    @GetMapping("/laptop")
+    public LaptopAukcja scrapeSingleLaptop(@RequestParam("url") String url) {
+        System.out.println("🔍 Scrapowanie pojedynczego laptopa z URL: " + url);
+
+        if (url == null || url.isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Parametr 'url' nie może być pusty"
+            );
+        }
+
+        if (!url.matches("^https?://.*$")) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Niepoprawny format URL"
+            );
+        }
+
+        try {
+            LaptopAukcja result = scraper.scrapeLaptopDetails(url);
+            if (result == null) {
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Nie znaleziono danych dla URL: " + url
+                );
+            }
+            return result;
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Błąd scrapowania: " + e.getMessage(), e
+            );
+        }
     }
 
 }

@@ -54,49 +54,32 @@
     }
 
     // Obsługa kliknięcia przycisku "Załaduj laptopy"
-    document.getElementById("loadBtn").addEventListener("click", () => {
-      fetch("/api/laptops/scrap") // Pobierz dane z backendu
-        .then(response => response.json())
-        .then(laptops => {
-          const tbody = document.querySelector("#laptopTable tbody");
+     document.getElementById("loadBtn").addEventListener("click", async () => {
+      const btn = document.getElementById("loadBtn");
+      btn.disabled = true;
 
-          tbody.innerHTML = ""; // Wyczyść poprzednie dane z tabeli
+      btn.innerHTML = `
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        Aktualizuję listę…
+      `;
 
-          laptops.forEach(item => {
-            const tr = document.createElement("tr"); // Nowy wiersz
+      try {
+        const res = await fetch("/api/laptops/scrap");
+        if (!res.ok) throw new Error("Aktualizacja nie powiodła się");
 
-            // Wypełnij komórki danymi laptopa
-            tr.innerHTML = `
-              <td>${formatValue(item.name)}</td>
-              <td>${formatValue(item.manufacturer)}</td>
-              <td>${formatValue(item.model)}</td>
-              <td>${formatValue(item.condition)}</td>
-              <td>${formatValue(item.ramAmount, "GB")}</td>
-              <td>${formatValue(item.diskType)}</td>
-              <td>${formatValue(item.diskSize, "GB")}</td>
-              <td>${formatValue(item.cpuModel)}</td>
-              <td>${formatValue(item.cpuCores)}</td>
-              <td>${formatValue(item.cpuFrequencyGHz, "GHz")}</td>
-              <td>${formatValue(item.screenType)}</td>
-              <td>${formatValue(item.screenSizeInches, "”")}</td>
-              <td>${formatValue(item.resolution)}</td>
-              <td>${formatValue(item.foldingScreen)}</td>
-              <td>${formatValue(item.touchScreen)}</td>
-              <td>${formatValue(item.graphics)}</td>
-              <td>${formatValue(item.operatingSystem)}</td>
-              <td><a href="${item.auctionPage}" target="_blank">Zobacz</a></td>
-            `;
-
-            tbody.appendChild(tr); // Dodaj wiersz do tabeli
-          });
-        })
-        .catch(err => {
-          alert("Błąd pobierania laptopów: " + err); // Obsługa błędów
-        });
+        await loadFromDB(); // Wczytaj dane z bazy i wyrenderuj
+      } catch (err) {
+        alert("Błąd aktualizacji laptopów: " + err);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = "🔄 Aktualizuj listę";
+      }
     });
 
+
+
     // loader z bazy
-    function loadFromDB() {
+    async function loadFromDB() {
       try {
         const res = await fetch('/api/laptops/readfromDB');
         const laptops = await res.json();
@@ -108,30 +91,35 @@
           return;
         }
 
-        laptops.forEach(item => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${formatValue(item.name)}</td>
-            <td>${formatValue(item.manufacturer)}</td>
-            <td>${formatValue(item.model)}</td>
-            <td>${formatValue(item.condition)}</td>
-            <td>${formatValue(item.ramAmount, 'GB')}</td>
-            <td>${formatValue(item.diskType)}</td>
-            <td>${formatValue(item.diskSize, 'GB')}</td>
-            <td>${formatValue(item.cpuModel)}</td>
-            <td>${formatValue(item.cpuCores)}</td>
-            <td>${formatValue(item.cpuFrequencyGHz, 'GHz')}</td>
-            <td>${formatValue(item.screenType)}</td>
-            <td>${formatValue(item.screenSizeInches, '”')}</td>
-            <td>${formatValue(item.resolution)}</td>
-            <td>${formatValue(item.foldingScreen)}</td>
-            <td>${formatValue(item.touchScreen)}</td>
-            <td>${formatValue(item.graphics)}</td>
-            <td>${formatValue(item.operatingSystem)}</td>
-            <td><a href="${item.auctionPage}" target="_blank">Zobacz</a></td>
-          `;
-          tbody.appendChild(tr);
-        });
+    laptops.forEach(item => {
+      try {
+        if (!item) return; // pomiń puste
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${formatValue(item.name)}</td>
+          <td>${formatValue(item.manufacturer)}</td>
+          <td>${formatValue(item.model)}</td>
+          <td>${formatValue(item.condition)}</td>
+          <td>${formatValue(item.ramAmount, 'GB')}</td>
+          <td>${formatValue(item.diskType)}</td>
+          <td>${formatValue(item.diskSize, 'GB')}</td>
+          <td>${formatValue(item.cpuModel)}</td>
+          <td>${formatValue(item.cpuCores)}</td>
+          <td>${formatValue(item.cpuFrequencyGHz, 'GHz')}</td>
+          <td>${formatValue(item.screenType)}</td>
+          <td>${formatValue(item.screenSizeInches, '”')}</td>
+          <td>${formatValue(item.resolution)}</td>
+          <td>${formatValue(item.foldingScreen)}</td>
+          <td>${formatValue(item.touchScreen)}</td>
+          <td>${formatValue(item.graphics)}</td>
+          <td>${formatValue(item.operatingSystem)}</td>
+          <td><a href="${item.auctionPage}" target="_blank">Zobacz</a></td>
+        `;
+        tbody.appendChild(tr);
+      } catch (err) {
+        console.warn('Błąd w wierszu:', err);
+      }
+    });
       } catch (err) {
         alert('Błąd pobierania laptopów: ' + err);
       }
