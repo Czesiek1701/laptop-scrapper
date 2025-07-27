@@ -169,4 +169,56 @@ public class LaptopController {
         }
     }
 
+    /**
+     * POST /api/laptops/complete
+     * Dla każdej aukcji z completed=false pobiera szczegóły i je zapisuje.
+     */
+    @Transactional
+    @GetMapping("/laptops/complete")
+    public String completeLaptopDetails() {
+        // 1. Pobierz wszystkie nieukończone wpisy
+        List<LaptopAukcjaJPA> toComplete = repo.findByCompletedFalse();
+        if (toComplete.isEmpty()) {
+            return "Brak nowych wpisów do uzupełnienia.";
+        }
+
+        // 2. Dla każdego wywołaj scraper i zaktualizuj pola
+        List<LaptopAukcjaJPA> updated = toComplete.stream().map(entity -> {
+            try {
+                LaptopAukcja details = scraper.scrapeLaptopDetails(entity.getAuctionPage());
+                if (details != null) {
+                    entity.setManufacturer(details.manufacturer());
+                    entity.setModel(details.model());
+                    entity.setAuctionTitle(details.name());
+                    entity.setItemCondition(details.condition());
+                    entity.setRamAmount(details.ramAmount());
+                    entity.setDiskType(details.diskType());
+                    entity.setDiskSize(details.diskSize());
+                    entity.setCpuModel(details.cpuModel());
+                    entity.setCpuFrequencyGHz(details.cpuFrequencyGHz());
+                    entity.setCpuCores(details.cpuCores());
+                    entity.setScreenType(details.screenType());
+                    entity.setFoldingScreen(details.foldingScreen());
+                    entity.setTouchScreen(details.touchScreen());
+                    entity.setScreenSizeInches(details.screenSizeInches());
+                    entity.setResolution(details.resolution());
+                    entity.setGraphics(details.graphics());
+                    entity.setOperatingSystem(details.operatingSystem());
+                    entity.setCreatedAt(java.time.LocalDateTime.now());
+                    entity.setCompleted(true);
+                }
+            } catch (Exception e) {
+                // loguj błąd i nie przerwij całej operacji
+                System.err.println("Błąd przy uzupełnianiu: " + e.getMessage());
+            }
+            return entity;
+        }).toList();
+
+        // 3. Zapisz wszystkie zmodyfikowane rekordy
+        repo.saveAll(updated);
+
+        return "Uzupełniono szczegóły dla " + updated.size() + " wpisów.";
+    }
+
+
 }

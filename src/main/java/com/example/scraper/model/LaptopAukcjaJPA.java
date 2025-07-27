@@ -45,12 +45,12 @@ public class LaptopAukcjaJPA {
 
     // Gettery i settery
 
-    public Long getId() {
-        return id;
-    }
-
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getAuctionPage() {
