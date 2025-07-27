@@ -40,8 +40,13 @@
 <!--    <button id="loadBtn" class="btn btn-primary mb-3">🔄 Aktualizuj listę</button>-->
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">📋 Lista laptopów</h1>
-        <button id="loadBtn" class="btn btn-primary">🔄 Aktualizuj listę</button>
+        <h1 class="mb-0">
+            📋 Lista laptopów
+        </h1>
+        <button id="refreshBtn" class="btn btn-primary mb-3">
+            🔄 Odśwież aukcje
+        </button>
+
     </div>
 
 
@@ -72,6 +77,7 @@
                 <th>Nazwa</th>
                 <th>Producent</th>
                 <th>Model</th>
+                <th>Cena</th>
                 <th>Stan</th>
                 <th>RAM</th>
                 <th>Typ dysku</th>
@@ -102,26 +108,55 @@
       return unit ? `${value} ${unit}` : value;
     }
 
-    // Obsługa kliknięcia przycisku "Załaduj laptopy"
-     document.getElementById("loadBtn").addEventListener("click", async () => {
-      const btn = document.getElementById("loadBtn");
-      btn.disabled = true;
+<!--    // Obsługa kliknięcia przycisku "Załaduj laptopy"-->
+<!--     document.getElementById("loadBtn").addEventListener("click", async () => {-->
+<!--      const btn = document.getElementById("loadBtn");-->
+<!--      btn.disabled = true;-->
 
+<!--      btn.innerHTML = `-->
+<!--        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>-->
+<!--        Aktualizuję listę…-->
+<!--      `;-->
+
+<!--      try {-->
+<!--        const res = await fetch("/api/laptops/scrap");-->
+<!--        if (!res.ok) throw new Error("Aktualizacja nie powiodła się");-->
+
+<!--        await loadFromDB(); // Wczytaj dane z bazy i wyrenderuj-->
+<!--      } catch (err) {-->
+<!--        alert("Błąd aktualizacji laptopów: " + err);-->
+<!--      } finally {-->
+<!--        btn.disabled = false;-->
+<!--        btn.innerHTML = "🔄 Aktualizuj listę";-->
+<!--      }-->
+<!--    });-->
+
+
+<!--    obsługa odświeżania-->
+    document.getElementById("refreshBtn").addEventListener("click", async () => {
+      const btn = document.getElementById("refreshBtn");
+      btn.disabled = true;
       btn.innerHTML = `
-        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-        Aktualizuję listę…
+        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+        Odświeżam…
       `;
 
       try {
-        const res = await fetch("/api/laptops/scrap");
-        if (!res.ok) throw new Error("Aktualizacja nie powiodła się");
+        // 1) Scrapujemy wszystkie aukcje z laurem
+        await fetch("/api/laptops/refresh", { method: "POST" });
 
-        await loadFromDB(); // Wczytaj dane z bazy i wyrenderuj
+        // 2) Uzupełniamy brakujące dane
+        //await fetch("/api/laptops/complete", { method: "POST" });
+
+        // 3) Wczytujemy od razu świeże dane i renderujemy w tabeli
+        await loadFromDB();
+
       } catch (err) {
-        alert("Błąd aktualizacji laptopów: " + err);
+        console.error(err);
+        alert("Coś poszło nie tak: " + err.message);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = "🔄 Aktualizuj listę";
+        btn.innerHTML = "🔄 Odśwież aukcje";
       }
     });
 
@@ -148,6 +183,7 @@
           <td>${formatValue(item.auctionTitle)}</td>
           <td>${formatValue(item.manufacturer)}</td>
           <td>${formatValue(item.model)}</td>
+          <td>${formatValue(item.price)}</td>
           <td>${formatValue(item.condition)}</td>
           <td>${formatValue(item.ramAmount)}</td>
           <td>${formatValue(item.diskType)}</td>

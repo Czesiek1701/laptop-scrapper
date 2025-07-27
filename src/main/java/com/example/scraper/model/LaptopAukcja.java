@@ -10,6 +10,7 @@ public record LaptopAukcja(
         String auctionTitle,
         String manufacturer,
         String model,
+        String price,
         String condition,
         String ramAmount,
         String diskType,

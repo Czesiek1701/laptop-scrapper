@@ -7,16 +7,11 @@
     <list default="true" id="a6c9c13e-d2a9-4557-86ac-6028a313c8d1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/controller/LaptopController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/controller/LaptopController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/controller/LaptopJPAController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/controller/LaptopJPAController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/model/LaptopAukcja.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/model/LaptopAukcja.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/model/LaptopAukcjaJPA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/model/LaptopAukcjaJPA.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/service/LaptopScraperLaurem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/service/LaptopScraperLaurem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/controller/LaptopController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/scraper/controller/LaptopController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/controller/LaptopJPAController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/scraper/controller/LaptopJPAController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/model/LaptopAukcja.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/scraper/model/LaptopAukcja.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/model/LaptopAukcjaJPA.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/scraper/model/LaptopAukcjaJPA.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/service/LaptopScraperLaurem.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/scraper/service/LaptopScraperLaurem.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/static/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT-jar-with-dependencies.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT-jar-with-dependencies.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT.jar" afterDir="false" />
@@ -134,7 +129,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/scraper/service/LaptopScraperLaurem.java</url>
-          <line>195</line>
+          <line>208</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">

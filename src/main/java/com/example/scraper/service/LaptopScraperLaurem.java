@@ -73,8 +73,8 @@ public class LaptopScraperLaurem {
             // 1) ID, producent i tytuł aukcji
             // —————————————————————————————————————————————————————————————
             String id = extractProductIdFromUrl(url);
-//            String auctionTitle = Optional.ofNullable(doc.selectFirst("h1.page-title"))
-//                    .map(Element::text).orElse("Brak tytułu").trim();
+            //            String auctionTitle = Optional.ofNullable(doc.selectFirst("h1.page-title"))
+            //           .map(Element::text).orElse("Brak tytułu").trim();
             Element h1 = doc.selectFirst("h1");
             String auctionTitle = h1 != null ? h1.text().trim() : "Brak tytułu";
 
@@ -124,6 +124,7 @@ public class LaptopScraperLaurem {
                     case "Rozdzielczość ekranu"-> resolution = value;
                     case "Karta Graficzna"     -> graphics   = value;
                 }
+
             }
 
             // —————————————————————————————————————————————————————————————
@@ -159,12 +160,24 @@ public class LaptopScraperLaurem {
                 }
             }
 
+            // —————————————————————————————————————————————————————————————
+            // 3.5) Cena
+            // —————————————————————————————————————————————————————————————
+            Element priceEl = doc.selectFirst("strong.projector_price_value");
+            String price = priceEl != null
+                    ? priceEl.text()                    // pobiera np. "1 589,00 zł"
+                    .replace("\u00A0", " ")         // zamienia spację nbsp na normalną
+                    .trim()
+                    : "Brak ceny";
+
+
             LaptopAukcja laptop = new LaptopAukcja(
                     id,
                     url,
                     auctionTitle,
                     manufacturer,
                     model,
+                    price,
                     condition,
                     ramAmount,
                     diskType,

@@ -22,6 +22,7 @@ public class LaptopAukcjaJPA {
     private boolean completed;
     private String manufacturer;
     private String model;
+    private String price;
     private String auctionTitle;
     private String itemCondition;
     private String ramAmount;
@@ -178,6 +179,15 @@ public class LaptopAukcjaJPA {
 
     public void setResolution(String resolution) {
         this.resolution = resolution;
+    }
+
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
     }
 
     public String getGraphics() {

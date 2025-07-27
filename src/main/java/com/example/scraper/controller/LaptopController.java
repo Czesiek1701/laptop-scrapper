@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +38,25 @@ public class LaptopController {
     public LaptopController(LaptopScraperLaurem scraper, LaptopAukcjaRepository repo) {
         this.scraper = scraper;
         this.repo = repo;
+    }
+
+    /**
+     * POST /api/refresh
+     * 1) scrapuje nowe aukcje
+     * 2) uzupełnia ich szczegóły
+     * 3) zwraca 200 OK
+     */
+    @Transactional
+    @PostMapping("/laptops/refresh")
+    public ResponseEntity<Void> refreshAll() {
+        // 1) scrap + szybki zapis podstawowych danych
+        getLaptops();
+
+        // 2) uzupełnienie detali (kompletne pola + ustawienie completed=true)
+        completeLaptopDetails();
+
+        // 3) zwróć OK
+        return ResponseEntity.ok().build();
     }
 
     @Transactional
@@ -72,6 +97,7 @@ public class LaptopController {
             entity.setAuctionPage(laptop.auctionPage());
             entity.setManufacturer(laptop.manufacturer());
             entity.setModel(laptop.model());
+            entity.setPrice(laptop.price());
             entity.setAuctionTitle(laptop.auctionTitle());
             entity.setItemCondition(laptop.condition());
             entity.setRamAmount(laptop.ramAmount());
@@ -110,6 +136,7 @@ public class LaptopController {
                     entity.getAuctionTitle(),        // tytuł aukcji
                     entity.getManufacturer(),        // producent
                     entity.getModel(),               // model
+                    entity.getPrice(),
                     entity.getItemCondition(),       // stan
                     entity.getRamAmount(),           // RAM
                     entity.getDiskType(),            // typ dysku
@@ -187,6 +214,7 @@ public class LaptopController {
                 if (details != null) {
                     entity.setManufacturer(details.manufacturer());
                     entity.setModel(details.model());
+                    entity.setPrice(details.price());
                     entity.setAuctionTitle(details.auctionTitle());
                     entity.setItemCondition(details.condition());
                     entity.setRamAmount(details.ramAmount());
