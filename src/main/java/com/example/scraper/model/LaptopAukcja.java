@@ -7,7 +7,7 @@ import com.example.scraper.model.LaptopAukcja;
 public record LaptopAukcja(
         String id,
         String auctionPage,
-        String name,
+        String auctionTitle,
         String manufacturer,
         String model,
         String condition,
@@ -18,7 +18,6 @@ public record LaptopAukcja(
         String cpuFrequencyGHz,
         String cpuCores,
         String screenType,
-        String foldingScreen,
         String touchScreen,
         String screenSizeInches,
         String resolution,

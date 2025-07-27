@@ -45,7 +45,7 @@ public class LaptopController {
             List<LaptopAukcjaJPA> entities = laptopy_nazwa_link.stream().map(laptop -> {
                 LaptopAukcjaJPA entity = new LaptopAukcjaJPA();
                 entity.setAuctionPage(laptop.auctionPage());
-                entity.setTitle(laptop.name());
+                entity.setAuctionTitle(laptop.auctionTitle());
                 entity.setCompleted(false);
                 return entity;
             }).filter(entity -> !repo.existsByAuctionPage(entity.getAuctionPage())).toList();
@@ -72,7 +72,7 @@ public class LaptopController {
             entity.setAuctionPage(laptop.auctionPage());
             entity.setManufacturer(laptop.manufacturer());
             entity.setModel(laptop.model());
-            entity.setAuctionTitle(laptop.name());
+            entity.setAuctionTitle(laptop.auctionTitle());
             entity.setItemCondition(laptop.condition());
             entity.setRamAmount(laptop.ramAmount());
             entity.setDiskType(laptop.diskType());
@@ -81,13 +81,12 @@ public class LaptopController {
             entity.setCpuFrequencyGHz(laptop.cpuFrequencyGHz());
             entity.setCpuCores(laptop.cpuCores());
             entity.setScreenType(laptop.screenType());
-            entity.setFoldingScreen(laptop.foldingScreen());
             entity.setTouchScreen(laptop.touchScreen());
             entity.setScreenSizeInches(laptop.screenSizeInches());
             entity.setResolution(laptop.resolution());
             entity.setGraphics(laptop.graphics());
             entity.setOperatingSystem(laptop.operatingSystem());
-            entity.setTitle(laptop.name());
+            entity.setAuctionTitle(laptop.auctionTitle());
             entity.setCreatedAt(java.time.LocalDateTime.now());
 
             return entity;
@@ -119,7 +118,6 @@ public class LaptopController {
                     entity.getCpuFrequencyGHz(),     // taktowanie
                     entity.getCpuCores(),            // liczba rdzeni
                     entity.getScreenType(),          // typ ekranu
-                    entity.getFoldingScreen(),       // ekran składany
                     entity.getTouchScreen(),         // ekran dotykowy
                     entity.getScreenSizeInches(),    // przekątna
                     entity.getResolution(),          // rozdzielczość
@@ -189,7 +187,7 @@ public class LaptopController {
                 if (details != null) {
                     entity.setManufacturer(details.manufacturer());
                     entity.setModel(details.model());
-                    entity.setAuctionTitle(details.name());
+                    entity.setAuctionTitle(details.auctionTitle());
                     entity.setItemCondition(details.condition());
                     entity.setRamAmount(details.ramAmount());
                     entity.setDiskType(details.diskType());
@@ -198,7 +196,6 @@ public class LaptopController {
                     entity.setCpuFrequencyGHz(details.cpuFrequencyGHz());
                     entity.setCpuCores(details.cpuCores());
                     entity.setScreenType(details.screenType());
-                    entity.setFoldingScreen(details.foldingScreen());
                     entity.setTouchScreen(details.touchScreen());
                     entity.setScreenSizeInches(details.screenSizeInches());
                     entity.setResolution(details.resolution());

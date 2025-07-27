@@ -31,7 +31,6 @@ public class LaptopAukcjaJPA {
     private String cpuFrequencyGHz;
     private String cpuCores;
     private String screenType;
-    private String foldingScreen;
     private String touchScreen;
     private String screenSizeInches;
     private String resolution;
@@ -41,7 +40,7 @@ public class LaptopAukcjaJPA {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    private String title;
+//    private String title;
 
     // Gettery i settery
 
@@ -157,14 +156,6 @@ public class LaptopAukcjaJPA {
         this.screenType = screenType;
     }
 
-    public String getFoldingScreen() {
-        return foldingScreen;
-    }
-
-    public void setFoldingScreen(String foldingScreen) {
-        this.foldingScreen = foldingScreen;
-    }
-
     public String getTouchScreen() {
         return touchScreen;
     }
@@ -213,11 +204,11 @@ public class LaptopAukcjaJPA {
         this.createdAt = createdAt;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
+//    public String getTitle() {
+//        return title;
+//    }
+//
+//    public void setTitle(String title) {
+//        this.title = title;
+//    }
 }

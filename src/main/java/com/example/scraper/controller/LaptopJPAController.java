@@ -23,7 +23,7 @@ public class LaptopJPAController {
         Optional<LaptopAukcjaJPA> pierwszy = repo.findFirstByOrderByIdAsc();
 
         return pierwszy
-                .map(l -> "📄 Pierwszy laptop w bazie to: " + l.getTitle())
+                .map(l -> "📄 Pierwszy laptop w bazie to: " + l.getAuctionTitle())
                 .orElse("😕 Brak danych w bazie.");
     }
 }

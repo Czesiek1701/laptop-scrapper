@@ -38,7 +38,7 @@ public class LaptopScraperLaurem {
 
                 // !!!!!!!!!!!!!!!!!!!!!
                 i++;
-                if(i>5) break;
+                if(i>8) break;
             }
 
         } catch (IOException e) {
@@ -46,6 +46,16 @@ public class LaptopScraperLaurem {
         }
         return out;
     }
+
+    private static String cleanUnits(String value) {
+        return value
+                .replaceAll("(\\d+),(\\d+)\\s*GHz", "$1.$2 GHz")     // zamiana przecinków na kropki w GHz
+                .replaceAll("(\\d+)\\s*GB\\s*GB", "$1 GB")           // usunięcie duplikatów GB
+                .replaceAll("(\\d+)\\\"\\s*[”\"]?", "$1\"")          // uporządkowanie znaków cali
+                .replaceAll("\\s+", " ")                             // usunięcie zbędnych spacji
+                .trim();
+    }
+
 
     public LaptopAukcja scrapeLaptopDetails(String url) {
         System.out.println("🔍 Rozpoczynam scrapowanie: " + url);
@@ -63,8 +73,11 @@ public class LaptopScraperLaurem {
             // 1) ID, producent i tytuł aukcji
             // —————————————————————————————————————————————————————————————
             String id = extractProductIdFromUrl(url);
-            String title = Optional.ofNullable(doc.selectFirst("h1.page-title"))
-                    .map(Element::text).orElse("Brak tytułu").trim();
+//            String auctionTitle = Optional.ofNullable(doc.selectFirst("h1.page-title"))
+//                    .map(Element::text).orElse("Brak tytułu").trim();
+            Element h1 = doc.selectFirst("h1");
+            String auctionTitle = h1 != null ? h1.text().trim() : "Brak tytułu";
+
 
             String manufacturer = Optional.ofNullable(
                             doc.selectFirst(".basic_info .producer a.brand"))
@@ -121,7 +134,6 @@ public class LaptopScraperLaurem {
             String cpuFreqGHz      = "N/A";
             String screenType      = "N/A";
             String touchScreen     = "N/A";
-            String foldingScreen   = "N/A";
             String condition       = status;          // domyślnie seria
             String operatingSystem = "Windows 11 Home";
 
@@ -142,7 +154,6 @@ public class LaptopScraperLaurem {
                     case "Taktowanie procesora"-> cpuFreqGHz      = value;
                     case "Typ matrycy"         -> screenType      = value;
                     case "Ekran dotykowy"      -> touchScreen     = value;
-                    case "Zawiasy matrycy"     -> foldingScreen   = value;
                     case "Stan produktu"       -> condition       = value;  // nadpisz, jeśli jest
                     case "System operacyjny"   -> operatingSystem = value;
                 }
@@ -151,9 +162,9 @@ public class LaptopScraperLaurem {
             LaptopAukcja laptop = new LaptopAukcja(
                     id,
                     url,
+                    auctionTitle,
                     manufacturer,
                     model,
-                    title,
                     condition,
                     ramAmount,
                     diskType,
@@ -162,7 +173,6 @@ public class LaptopScraperLaurem {
                     cpuFreqGHz,
                     cpuCores,
                     screenType,
-                    foldingScreen,
                     touchScreen,
                     screenSize,
                     resolution,
@@ -170,7 +180,7 @@ public class LaptopScraperLaurem {
                     operatingSystem
             );
 
-            System.out.println("✅ Scrapowanie zakończone: " + title);
+            System.out.println("✅ Scrapowanie zakończone: " + auctionTitle);
             return laptop;
 
         } catch (IOException e) {
