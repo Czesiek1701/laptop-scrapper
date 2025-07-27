@@ -6,25 +6,19 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
-import java.util.stream.Collectors;
-import java.util.Optional;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class LaptopScraperLaurem {
 
     private static final String LISTING_URL = "https://laurem.pl/pol_m_Laptopy-100.html";
 
-    /**
-     * 1) Scrape listing page → zbierz wszystkie linki
-     * 2) Dla każdego linku wywołaj scrapeLaptopDetails(...)
-     */
     public List<LaptopAukcja> getLaptops() {
         List<LaptopAukcja> out = new ArrayList<>();
         try {
@@ -35,13 +29,16 @@ public class LaptopScraperLaurem {
                     .followRedirects(true)
                     .get();
 
-            // wszystkie kafelki z linkiem do produktu
             Elements cards = listing.select("a.product-name");
-
+            int i = 0;
             for (Element card : cards) {
                 String url = card.absUrl("href");
                 LaptopAukcja lap = scrapeLaptopDetails(url);
                 if (lap != null) out.add(lap);
+
+                // !!!!!!!!!!!!!!!!!!!!!
+                i++;
+                if(i>5) break;
             }
 
         } catch (IOException e) {
@@ -50,9 +47,8 @@ public class LaptopScraperLaurem {
         return out;
     }
 
-
     public LaptopAukcja scrapeLaptopDetails(String url) {
-        System.out.println("🔍 Rozpoczynam scrapowanie laptopa ze strony: " + url);
+        System.out.println("🔍 Rozpoczynam scrapowanie: " + url);
         try {
             Document doc = Jsoup.connect(url)
                     .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
@@ -68,72 +64,86 @@ public class LaptopScraperLaurem {
             // —————————————————————————————————————————————————————————————
             String id = extractProductIdFromUrl(url);
             String title = Optional.ofNullable(doc.selectFirst("h1.page-title"))
-                    .map(Element::text).orElse("Brak tytułu")
-                    .trim();
+                    .map(Element::text).orElse("Brak tytułu").trim();
 
             String manufacturer = Optional.ofNullable(
                             doc.selectFirst(".basic_info .producer a.brand"))
                     .map(Element::text).orElse("N/A");
 
             // —————————————————————————————————————————————————————————————
+            // 1b) Seria (u nas traktujemy jako 'Stan')
+            // —————————————————————————————————————————————————————————————
+            String status = Optional.ofNullable(
+                            doc.selectFirst(".basic_info .param_trait.zloty .proj_laur"))
+                    .map(Element::text).orElse("N/A");
+
+            // —————————————————————————————————————————————————————————————
             // 2) Cechy z <div class="traits_info">
             // —————————————————————————————————————————————————————————————
-            String cpuModel       = "N/A";
-            String ramAmount      = "N/A";
-            String diskSize       = "N/A";
-            String diskType       = "N/A";
-            String screenSize     = "N/A";
-            String resolution     = "N/A";
-            String graphics       = "N/A";
+            String cpuModel    = "N/A";
+            String ramAmount   = "N/A";
+            String diskSize    = "N/A";
+            String diskType    = "N/A";
+            String screenSize  = "N/A";
+            String resolution  = "N/A";
+            String graphics    = "N/A";
 
             for (Element trait : doc.select(".traits_info .param_trait")) {
-                String label = trait.selectFirst("span").text()
-                        .replace(":", "").trim();
-                String value = trait.selectFirst("strong.lt_description")
-                        .text().trim();
+                Element labelEl = trait.selectFirst("span");
+                Element valueEl = trait.selectFirst("strong.lt_description");
+
+                String label = labelEl != null
+                        ? labelEl.text().replace(":", "").trim()
+                        : "N/A";
+                String value = valueEl != null
+                        ? valueEl.text().trim()
+                        : "N/A";
 
                 switch (label) {
-                    case "Procesor"       -> cpuModel = value;
-                    case "Pamięć RAM"     -> ramAmount = value;
-                    case "Dysk Twardy"    -> {
-                        // "512GB SSD" → diskSize="512GB", diskType="SSD"
+                    case "Procesor"            -> cpuModel   = value;
+                    case "Pamięć RAM"          -> ramAmount  = value;
+                    case "Dysk Twardy"         -> {
                         String[] parts = value.split("\\s+", 2);
                         diskSize = parts[0];
-                        diskType = (parts.length>1 ? parts[1] : "N/A");
+                        diskType = (parts.length > 1 ? parts[1] : "N/A");
                     }
-                    case "Przekątna ekranu" -> screenSize = value;
-                    case "Rozdzielczość ekranu" -> resolution = value;
-                    case "Karta Graficzna"-> graphics = value;
+                    case "Przekątna ekranu"    -> screenSize = value;
+                    case "Rozdzielczość ekranu"-> resolution = value;
+                    case "Karta Graficzna"     -> graphics   = value;
                 }
             }
 
             // —————————————————————————————————————————————————————————————
             // 3) Dodatkowe szczegóły z tabeli <tbody><tr>
             // —————————————————————————————————————————————————————————————
-            String model            = "N/A";
-            String cpuCores         = "N/A";
-            String cpuFrequencyGHz  = "N/A";
-            String screenType       = "N/A";
-            String touchScreen      = "N/A";
-            String foldingScreen    = "N/A";
-            String condition        = "N/A";
-            String operatingSystem  = "Windows 11 Home";  // domyślnie
+            String model           = "N/A";
+            String cpuCores        = "N/A";
+            String cpuFreqGHz      = "N/A";
+            String screenType      = "N/A";
+            String touchScreen     = "N/A";
+            String foldingScreen   = "N/A";
+            String condition       = status;          // domyślnie seria
+            String operatingSystem = "Windows 11 Home";
 
             for (Element row : doc.select("tbody tr")) {
-                String label = row.selectFirst("td:nth-child(1) span")
-                        .text().replace(":", "").trim();
-                String value = row.selectFirst("td:nth-child(2) .n54117_item_b_sub")
-                        .text().trim();
+                Element labelEl = row.selectFirst("td:nth-child(1) span");
+                Element valueEl = row.selectFirst("td:nth-child(2) .n54117_item_b_sub");
+
+                String label = labelEl != null
+                        ? labelEl.text().replace(":", "").trim()
+                        : "N/A";
+                String value = valueEl != null
+                        ? valueEl.text().trim()
+                        : "N/A";
 
                 switch (label) {
-                    case "Model"               -> model = value;
-                    case "Liczba rdzeni"       -> cpuCores = value;
-                    case "Taktowanie procesora"-> cpuFrequencyGHz = value;
-                    case "Typ matrycy"         -> screenType = value;
-                    case "Ekran dotykowy"      -> touchScreen = value;
-                    // jeżeli będzie kiedykolwiek w HTML:
-                    case "Zawiasy matrycy"     -> foldingScreen = value;
-                    case "Stan produktu"       -> condition = value;
+                    case "Model"               -> model           = value;
+                    case "Liczba rdzeni"       -> cpuCores        = value;
+                    case "Taktowanie procesora"-> cpuFreqGHz      = value;
+                    case "Typ matrycy"         -> screenType      = value;
+                    case "Ekran dotykowy"      -> touchScreen     = value;
+                    case "Zawiasy matrycy"     -> foldingScreen   = value;
+                    case "Stan produktu"       -> condition       = value;  // nadpisz, jeśli jest
                     case "System operacyjny"   -> operatingSystem = value;
                 }
             }
@@ -149,7 +159,7 @@ public class LaptopScraperLaurem {
                     diskType,
                     diskSize,
                     cpuModel,
-                    cpuFrequencyGHz,
+                    cpuFreqGHz,
                     cpuCores,
                     screenType,
                     foldingScreen,
@@ -169,12 +179,8 @@ public class LaptopScraperLaurem {
         }
     }
 
-    // pomocniczka do wyciągnięcia ID z URL, przykładowa:
     private String extractProductIdFromUrl(String url) {
-        // np. ...-22888.html → 22888
         Matcher m = Pattern.compile("-(\\d+)\\.html$").matcher(url);
         return m.find() ? m.group(1) : "0";
     }
-
-
 }

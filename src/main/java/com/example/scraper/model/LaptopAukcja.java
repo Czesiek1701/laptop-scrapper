@@ -7,9 +7,9 @@ import com.example.scraper.model.LaptopAukcja;
 public record LaptopAukcja(
         String id,
         String auctionPage,
+        String name,
         String manufacturer,
         String model,
-        String name,
         String condition,
         String ramAmount,
         String diskType,
