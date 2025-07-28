@@ -1,50 +1,29 @@
 package com.example.scraper.controller;
 
-
 import com.example.scraper.model.LaptopAukcja;
 import com.example.scraper.model.LaptopAukcjaJPA;
 import com.example.scraper.repository.LaptopAukcjaRepository;
 import com.example.scraper.service.LaptopScraperLaurem;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.example.scraper.model.LaptopAukcja;
-import com.example.scraper.model.LaptopAukcjaJPA;
-import com.example.scraper.repository.LaptopAukcjaRepository;
-
-
-import java.util.Collections;
-import com.example.scraper.service.LaptopScraperLaurem;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
+
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/laptops")
 public class LaptopController {
 
     private final LaptopScraperLaurem scraper;
@@ -55,167 +34,111 @@ public class LaptopController {
         this.repo = repo;
     }
 
-
-    /**
-     * POST /api/laptops/refresh
-     * 0) resetujemy completed = false
-     * 1) scrapujemy pełne dane
-     * 2) upsertujemy + ustawiamy completed = true
-     * 3) usuwamy nieistniejące już rekordy
-     */
+    /** Odświeża dane: scrap + upsert + usuwanie starych */
     @Transactional
-    @PostMapping("/laptops/refresh")
+    @PostMapping("/refresh")
     public ResponseEntity<Void> refreshAll() {
-        resetCompletedFlags();
         List<LaptopAukcja> scraped = scraper.getLaptops();
         upsertScraped(scraped);
         removeStaleRecords(scraped);
         return ResponseEntity.ok().build();
     }
 
-    // 0) reset completed = false
-    private void resetCompletedFlags() {
-        List<LaptopAukcjaJPA> all = repo.findAll();
-        all.forEach(e -> e.setCompleted(false));
-        repo.saveAll(all);
+    /** Pobiera dane i zapisuje tylko nowe aukcje (krótka forma) */
+    @Transactional
+    @GetMapping("/scrap")
+    public List<LaptopAukcja> getLaptops() {
+        List<LaptopAukcja> scraped = scraper.getLaptops();
+
+        List<LaptopAukcjaJPA> newEntries = scraped.stream()
+                .filter(laptop -> !repo.existsByAuctionPage(laptop.auctionPage()))
+                .map(laptop -> {
+                    LaptopAukcjaJPA entity = new LaptopAukcjaJPA();
+                    entity.setAuctionPage(laptop.auctionPage());
+                    entity.setAuctionTitle(laptop.auctionTitle());
+                    entity.setCompleted(false);
+                    return entity;
+                }).toList();
+
+        repo.saveAll(newEntries);
+        return scraped;
     }
 
-    // 1+2) insert lub update każdej aukcji
-    private void upsertScraped(List<LaptopAukcja> scraped) {
-        Map<String, LaptopAukcjaJPA> existing = repo.findAll()
-                .stream()
-                .collect(Collectors.toMap(
-                        LaptopAukcjaJPA::getAuctionPage,
-                        e -> e
-                ));
+    /** Zapisuje pełne dane laptopów (z listy) */
+    @Transactional
+    @PostMapping("/save")
+    public ResponseEntity<String> saveLaptops(@RequestBody List<LaptopAukcja> laptops) {
+        List<LaptopAukcjaJPA> entities = laptops.stream()
+                .map(this::mapDtoToEntity)
+                .toList();
 
-        List<LaptopAukcjaJPA> toSave = new ArrayList<>();
+        repo.saveAll(entities);
+        return ResponseEntity.ok("Laptopy zapisane: " + entities.size());
+    }
+
+    // --- Prywatne metody pomocnicze ---
+
+    private void upsertScraped(List<LaptopAukcja> scraped) {
+        Map<String, LaptopAukcjaJPA> existing = repo.findAll().stream()
+                .collect(Collectors.toMap(LaptopAukcjaJPA::getAuctionPage, e -> e));
+
         LocalDateTime now = LocalDateTime.now();
+        List<LaptopAukcjaJPA> toSave = new ArrayList<>();
 
         for (LaptopAukcja dto : scraped) {
-            LaptopAukcjaJPA entity = existing
-                    .getOrDefault(dto.auctionPage(), new LaptopAukcjaJPA());
+            LaptopAukcjaJPA entity = existing.getOrDefault(dto.auctionPage(), new LaptopAukcjaJPA());
             mapDtoToEntity(dto, entity);
-
-            // ustawiamy completed oraz pierwszy znacznik createdAt
             entity.setCompleted(true);
-            if (entity.getCreatedAt() == null) {
-                entity.setCreatedAt(now);
-            }
-
+            if (entity.getCreatedAt() == null) entity.setCreatedAt(now);
             toSave.add(entity);
         }
 
         repo.saveAll(toSave);
     }
 
-    // 3) usuwamy rekordy, których nie ma w aktualnym scrapie
     private void removeStaleRecords(List<LaptopAukcja> scraped) {
         Set<String> livePages = scraped.stream()
                 .map(LaptopAukcja::auctionPage)
                 .collect(Collectors.toSet());
 
-        List<LaptopAukcjaJPA> stale = repo.findAll()
-                .stream()
+        List<LaptopAukcjaJPA> stale = repo.findAll().stream()
                 .filter(e -> !livePages.contains(e.getAuctionPage()))
-                .collect(Collectors.toList());
+                .toList();
 
-        if (!stale.isEmpty()) {
-            repo.deleteAll(stale);
-        }
+        repo.deleteAll(stale);
     }
 
-    // mapowanie z DTO na encję (bez updatedAt)
-    private void mapDtoToEntity(LaptopAukcja src, LaptopAukcjaJPA trg) {
-        trg.setAuctionPage(     src.auctionPage()       );
-        trg.setAuctionTitle(    src.auctionTitle()      );
-        trg.setManufacturer(    src.manufacturer()      );
-        trg.setModel(           src.model()             );
-        trg.setPrice(           src.price()             );
-        trg.setItemCondition(   src.condition()         );
-        trg.setRamAmount(       src.ramAmount()         );
-        trg.setDiskType(        src.diskType()          );
-        trg.setDiskSize(        src.diskSize()          );
-        trg.setCpuModel(        src.cpuModel()          );
-        trg.setCpuFrequencyGHz( src.cpuFrequencyGHz()   );
-        trg.setCpuCores(        src.cpuCores()          );
-        trg.setScreenType(      src.screenType()        );
-        trg.setTouchScreen(     src.touchScreen()       );
-        trg.setScreenSizeInches(src.screenSizeInches()  );
-        trg.setResolution(      src.resolution()        );
-        trg.setGraphics(        src.graphics()          );
-        trg.setOperatingSystem( src.operatingSystem()   );
+    private LaptopAukcjaJPA mapDtoToEntity(LaptopAukcja dto) {
+        LaptopAukcjaJPA entity = new LaptopAukcjaJPA();
+        return mapDtoToEntity(dto, entity);
     }
 
-        @Transactional
-    @GetMapping("/laptops/scrap")
-    public List<LaptopAukcja> getLaptops() {
-        System.out.println("Scrap + krótki zapis");
-        try {
-//            System.out.println("🔐 Zmienna SPRING_DATASOURCE_PASSWORD: " + System.getenv("SPRING_DATASOURCE_PASSWORD"));
-            List<LaptopAukcja> laptopy_nazwa_link = scraper.getLaptops();
-
-            List<LaptopAukcjaJPA> entities = laptopy_nazwa_link.stream().map(laptop -> {
-                LaptopAukcjaJPA entity = new LaptopAukcjaJPA();
-                entity.setAuctionPage(laptop.auctionPage());
-                entity.setAuctionTitle(laptop.auctionTitle());
-                entity.setCompleted(false);
-                return entity;
-            }).filter(entity -> !repo.existsByAuctionPage(entity.getAuctionPage())).toList();
-
-            repo.saveAll(entities);
-
-            return laptopy_nazwa_link;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Collections.emptyList();
-        }
-
-    }
-
-    @Transactional
-    @PostMapping("/laptops/save")
-    public String saveLaptops(List<LaptopAukcja> scraped_laptops){
-//        List<LaptopAukcja> scraped = scraper.getLaptops();
-        System.out.println("Zapisywanie...");
-        List<LaptopAukcjaJPA> entities = scraped_laptops.stream().map(laptop -> {
-            LaptopAukcjaJPA entity = new LaptopAukcjaJPA();
-
-            entity.setAuctionPage(laptop.auctionPage());
-            entity.setManufacturer(laptop.manufacturer());
-            entity.setModel(laptop.model());
-            entity.setPrice(laptop.price());
-            entity.setAuctionTitle(laptop.auctionTitle());
-            entity.setItemCondition(laptop.condition());
-            entity.setRamAmount(laptop.ramAmount());
-            entity.setDiskType(laptop.diskType());
-            entity.setDiskSize(laptop.diskSize());
-            entity.setCpuModel(laptop.cpuModel());
-            entity.setCpuFrequencyGHz(laptop.cpuFrequencyGHz());
-            entity.setCpuCores(laptop.cpuCores());
-            entity.setScreenType(laptop.screenType());
-            entity.setTouchScreen(laptop.touchScreen());
-            entity.setScreenSizeInches(laptop.screenSizeInches());
-            entity.setResolution(laptop.resolution());
-            entity.setGraphics(laptop.graphics());
-            entity.setOperatingSystem(laptop.operatingSystem());
-            entity.setAuctionTitle(laptop.auctionTitle());
-            entity.setCreatedAt(java.time.LocalDateTime.now());
-
-            return entity;
-        }).toList();
-
-        System.out.println("Do zapisu: " + entities.size());  // powinno być 65
-        repo.saveAll(entities);
-        System.out.println("Zapis zakończony");
-
-        return "Laptopy zapisane do bazy: " + entities.size();
+    private LaptopAukcjaJPA mapDtoToEntity(LaptopAukcja src, LaptopAukcjaJPA trg) {
+        trg.setAuctionPage(src.auctionPage());
+        trg.setAuctionTitle(src.auctionTitle());
+        trg.setManufacturer(src.manufacturer());
+        trg.setModel(src.model());
+        trg.setPrice(src.price());
+        trg.setItemCondition(src.condition());
+        trg.setRamAmount(src.ramAmount());
+        trg.setDiskType(src.diskType());
+        trg.setDiskSize(src.diskSize());
+        trg.setCpuModel(src.cpuModel());
+        trg.setCpuFrequencyGHz(src.cpuFrequencyGHz());
+        trg.setCpuCores(src.cpuCores());
+        trg.setScreenType(src.screenType());
+        trg.setTouchScreen(src.touchScreen());
+        trg.setScreenSizeInches(src.screenSizeInches());
+        trg.setResolution(src.resolution());
+        trg.setGraphics(src.graphics());
+        trg.setOperatingSystem(src.operatingSystem());
+        trg.setCreatedAt(LocalDateTime.now());
+        return trg;
     }
 
 
     @Transactional(readOnly = true)
-    @GetMapping("/laptops/readfromDB")
+    @GetMapping("/readfromDB")
     public List<LaptopAukcja> readFromDB() {
         return repo.findAll().stream()
             .map(entity -> new LaptopAukcja(
@@ -287,7 +210,7 @@ public class LaptopController {
      * Dla każdej aukcji z completed=false pobiera szczegóły i je zapisuje.
      */
     @Transactional
-    @GetMapping("/laptops/complete")
+    @GetMapping("/complete")
     public String completeLaptopDetails() {
         // 1. Pobierz wszystkie nieukończone wpisy
         List<LaptopAukcjaJPA> toComplete = repo.findByCompletedFalse();
