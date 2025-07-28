@@ -47,6 +47,25 @@ public class LaptopAukcjaJPA {
 
     public LaptopAukcjaJPA(String auctionPage) {
         this.auctionPage = auctionPage;
+        this.completed = false;
+        this.manufacturer = "N/A";
+        this.model = "N/A";
+        this.price = "N/A";
+        this.auctionTitle = "N/A";
+        this.itemCondition = "N/A";
+        this.ramAmount = "N/A";
+        this.diskType = "N/A";
+        this.diskSize = "N/A";
+        this.cpuModel = "N/A";
+        this.cpuFrequencyGHz = "N/A";
+        this.cpuCores = "N/A";
+        this.screenType = "N/A";
+        this.touchScreen = "N/A";
+        this.screenSizeInches = "N/A";
+        this.resolution = "N/A";
+        this.graphics = "N/A";
+        this.operatingSystem = "N/A";
+        this.createdAt = null;
     }
 
 

@@ -7,6 +7,8 @@ import com.example.scraper.repository.LaptopAukcjaRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import java.util.stream.Collectors;
+
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
@@ -110,7 +112,7 @@ public class LaptopScraperServiceLaurem extends LaptopScraperService {
                     case "Pamięć RAM"               -> laptop.setRamAmount(value);
                     case "Dysk Twardy"              -> {
                         String[] parts = value.split("\\s+", 2);
-                        laptop.setDiskSize(parts.length > 0 ? parts[0] : "N/A");
+                        laptop.setDiskSize((parts.length > 0 ? parts[0] : "N/A").replaceAll("[^0-9]", "").concat(" GB"));
                         laptop.setDiskType(parts.length > 1 ? parts[1] : "N/A");
                     }
                     case "Przekątna ekranu"         -> laptop.setScreenSizeInches(value);
@@ -133,8 +135,8 @@ public class LaptopScraperServiceLaurem extends LaptopScraperService {
 
                 switch (label) {
                     case "Model"                    -> laptop.setModel(value);
-                    case "Liczba rdzeni"            -> laptop.setCpuCores(value);
-                    case "Taktowanie procesora"     -> laptop.setCpuFrequencyGHz(value);
+                    case "Liczba rdzeni"            -> laptop.setCpuCores( value.replaceAll("[^0-9]", ""));
+                    case "Taktowanie procesora"     -> laptop.setCpuFrequencyGHz(value.split("\\s+")[0] + " GHz");
                     case "Typ matrycy"              -> laptop.setScreenType(value);
                     case "Ekran dotykowy"           -> laptop.setTouchScreen(value);
                     case "Stan produktu"            -> laptop.setItemCondition(value); // nadpisz, jeśli lepsze
@@ -149,6 +151,18 @@ public class LaptopScraperServiceLaurem extends LaptopScraperService {
                             .map(s -> s.replace("\u00A0", " ").trim())
                             .orElse("Brak ceny")
             );
+
+            Elements options = doc.select("#mw_44 ul.options li");
+
+            String systems = options.stream()
+                    .map(el -> el.attr("data-title"))
+                    .filter(s -> !s.isEmpty() && !s.equalsIgnoreCase("Brak systemu"))
+                    .filter(s -> !s.isEmpty())
+                    .distinct()
+                    .collect(Collectors.joining("\n"));
+
+            laptop.setOperatingSystem(systems.isEmpty() ? "Brak systemu" : systems);
+
 
             // Timestamp
             laptop.setCreatedAt(

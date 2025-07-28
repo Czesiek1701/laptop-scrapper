@@ -87,33 +87,59 @@ public class LaptopScraperServiceAmso extends LaptopScraperService {
             );
 
             // Cechy
-            for (Element param : doc.select(".projector_desc_param_wrapper #projector_dictionary .dictionary__group" )) {
+            for (Element param : doc.select(".projector_desc_param_wrapper #projector_dictionary .dictionary__param")) {
 
-                String label = Optional.ofNullable(param.selectFirst(".dictionary__name span"))
+                // Etykieta (label)
+                String label = Optional.ofNullable(param.selectFirst(".dictionary__name_txt"))
                         .map(Element::text)
                         .map(s -> s.replace(":", "").trim())
                         .orElse("N/A");
+//                System.out.println("  Label znaleziony: " + label);
 
+                // Wartość (value)
                 String value = Optional.ofNullable(param.selectFirst(".dictionary__value_txt"))
                         .map(Element::text)
                         .map(String::trim)
                         .orElse("N/A");
+//                System.out.println("  Value znalezione: " + value);
 
                 switch (label) {
-                    case "Symbol"                   -> laptop.setModel(value);
-                    case "Model"                    -> laptop.setModel(value);
-                    case "Liczba rdzeni"            -> laptop.setCpuCores(value);
-                    case "Taktowanie procesora"     -> laptop.setCpuFrequencyGHz(value);
-                    case "Typ matrycy"              -> laptop.setScreenType(value);
-                    case "Ekran dotykowy"           -> laptop.setTouchScreen(value);
-                    case "Stan produktu"            -> laptop.setItemCondition(value); // nadpisz, jeśli lepsze
-                    case "System operacyjny"        -> laptop.setOperatingSystem(value);
+                    case "Model"                        -> laptop.setModel(value);
+                    case "Marka"                        -> laptop.setManufacturer(value);
+                    case "Taktowanie procesora (GHz)"  -> {
+                        String cleanValue = value.endsWith("GHz") ? value : value + " GHz";
+                        laptop.setCpuFrequencyGHz(cleanValue);
+                    }
+                    case "Liczba rdzeni procesora"     -> laptop.setCpuCores(value);
+                    case "Pamięć RAM"                  -> {
+                        laptop.setRamAmount(
+                                value.replaceAll("[^0-9]", "").concat(" GB")
+                        );
+                    }
+                    case "Typ dysku twardego"          -> laptop.setDiskType(value);
+                    case "Dysk"                         -> {
+                        laptop.setDiskSize(
+                                value.replaceAll("[^0-9]", "").concat(" GB")
+                        );
+                    }
+                    case "Procesor"                     -> laptop.setCpuModel(value);
+                    case "Typ matrycy"                 -> laptop.setScreenType(value);
+                    case "Ekran dotykowy"              -> laptop.setTouchScreen(value);
+                    case "Przekątna ekranu w calach"  -> {
+                        // Dodaj " jeśli nie ma
+                        String cleanValue = value.endsWith("\"") ? value : value + "\"";
+                        laptop.setScreenSizeInches(cleanValue);
+                    }
+                    case "Rozdzielczość natywna"      -> laptop.setResolution(value);
+                    case "Model karty graficznej"      -> laptop.setGraphics(value);
+                    case "System operacyjny"           -> laptop.setOperatingSystem(value);
+                    case "Stan techniczny"             -> laptop.setItemCondition(value);
                 }
             }
 
             // Cena
             laptop.setPrice(
-                    Optional.ofNullable(doc.selectFirst("strong.projector_price_value"))
+                    Optional.ofNullable(doc.selectFirst(".projector_prices__price_wrapper #projector_price_value"))
                             .map(Element::text)
                             .map(s -> s.replace("\u00A0", " ").trim())
                             .orElse("Brak ceny")
@@ -123,6 +149,8 @@ public class LaptopScraperServiceAmso extends LaptopScraperService {
             laptop.setCreatedAt(
                     LocalDateTime.now()
             );
+
+            System.out.println("Model: " + laptop.getModel());
 
             System.out.println("Scrapowanie zakończone: " + laptop.getAuctionTitle());
             return LaptopMapper.mapEntityToDto(laptop);
