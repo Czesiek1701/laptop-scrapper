@@ -1,13 +1,15 @@
 com\example\scraper\model\LaptopMapper.class
-com\example\scraper\service\LauremSiteScraperService.class
 com\example\scraper\model\LaptopAukcjaJPA.class
 com\example\scraper\ScraperApplication.class
 com\example\scraper\repository\LaptopAukcjaRepository.class
 com\example\scraper\model\LaptopAukcja.class
 com\example\scraper\controller\TestLaptopJPAController.class
+com\example\scraper\service\LaptopScraperService.class
+com\example\scraper\service\LaptopScraperServiceAmso.class
 com\example\scraper\controller\TestHelloController.class
 com\example\scraper\controller\LaptopController.class
-com\example\scraper\service\LauremLaptopScraperService.class
+com\example\scraper\service\TestLauremSiteScraperService.class
 Main\Java\App.class
 MavenWrapperDownloader$1.class
+com\example\scraper\service\LaptopScraperServiceLaurem.class
 MavenWrapperDownloader.class

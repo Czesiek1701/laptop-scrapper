@@ -41,6 +41,15 @@ public class LaptopAukcjaJPA {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    public LaptopAukcjaJPA() {
+        // wymagany przez JPA / Jackson
+    }
+
+    public LaptopAukcjaJPA(String auctionPage) {
+        this.auctionPage = auctionPage;
+    }
+
+
 //    private String title;
 
     // Gettery i settery

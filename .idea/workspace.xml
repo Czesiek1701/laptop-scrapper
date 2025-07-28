@@ -5,29 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a6c9c13e-d2a9-4557-86ac-6028a313c8d1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/model/LaptopMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/service/LaptopScraperServiceAmso.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/service/LaptopScraperServiceLaurem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/controller/LaptopController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/controller/LaptopController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/repository/LaptopAukcjaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/repository/LaptopAukcjaRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/service/LauremLaptopScraperService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/service/LauremLaptopScraperService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/Main/Java/App.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/MavenWrapperDownloader$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/MavenWrapperDownloader.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/ScraperApplication.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/controller/LaptopController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/controller/TestHelloController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/controller/TestLaptopJPAController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/model/LaptopAukcja.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/model/LaptopAukcjaJPA.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/repository/LaptopAukcjaRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/model/LaptopAukcjaJPA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/model/LaptopAukcjaJPA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/model/LaptopMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/model/LaptopMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/service/LauremLaptopScraperService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/service/LaptopScraperService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/scraper/service/LauremSiteScraperService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/scraper/service/TestLauremSiteScraperService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/controller/LaptopController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/scraper/controller/LaptopController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/model/LaptopAukcjaJPA.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/scraper/model/LaptopAukcjaJPA.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/model/LaptopMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/scraper/model/LaptopMapper.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/service/LauremLaptopScraperService.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/example/scraper/service/LauremSiteScraperService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT-jar-with-dependencies.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT.jar.original" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT-jar-with-dependencies.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT-jar-with-dependencies.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/target/scraper-1.0-SNAPSHOT.jar.original" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,6 +78,9 @@
       <recent name="C:\Users\grzes\IdeaProjects\laptop-scrapper\trash" />
       <recent name="C:\Users\grzes\IdeaProjects\laptop-scrapper\webdrivers" />
       <recent name="C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\resources\static" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.example.scraper.service" />
     </key>
   </component>
   <component name="RunManager">
@@ -140,18 +138,23 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/scraper/service/LauremLaptopScraperService.java</url>
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/scraper/service/LaptopScraperService.java</url>
           <line>276</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/scraper/controller/LaptopController.java</url>
-          <line>19</line>
+          <line>23</line>
           <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/scraper/service/LaptopScraperServiceAmso.java</url>
+          <line>31</line>
+          <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/scraper/controller/LaptopController.java</url>
-          <line>155</line>
+          <line>179</line>
           <properties class="com.example.scraper.controller.LaptopController" method="completeLaptopDetails">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />

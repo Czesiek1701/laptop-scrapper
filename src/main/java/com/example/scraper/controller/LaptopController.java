@@ -3,11 +3,15 @@ package com.example.scraper.controller;
 import com.example.scraper.model.LaptopAukcja;
 import com.example.scraper.model.LaptopAukcjaJPA;
 import com.example.scraper.repository.LaptopAukcjaRepository;
-import com.example.scraper.service.LauremLaptopScraperService;
+import com.example.scraper.service.LaptopScraperService;
+import com.example.scraper.service.LaptopScraperServiceLaurem;
+import com.example.scraper.service.LaptopScraperServiceAmso;
 import com.example.scraper.model.LaptopMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import java.util.ArrayList;
+
 
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
@@ -21,12 +25,18 @@ import java.util.List;
 @RequestMapping("/api/laptops")
 public class LaptopController {
 
-    private final LauremLaptopScraperService scraper;
+    private final LaptopScraperServiceLaurem scraper1;
+    private final LaptopScraperServiceAmso scraper2;
     private final LaptopAukcjaRepository repo;
 //    private final LaptopMapper laptopMapper;
 
-    public LaptopController(LauremLaptopScraperService scraper, LaptopAukcjaRepository repo) {
-        this.scraper = scraper;
+    public LaptopController(
+            LaptopScraperServiceLaurem scraper1,
+            LaptopScraperServiceAmso scraper2,
+            LaptopAukcjaRepository repo
+    ) {
+        this.scraper1 = scraper1;
+        this.scraper2 = scraper2;
         this.repo = repo;
 //        this.laptopMapper = laptopMapper;
     }
@@ -36,8 +46,12 @@ public class LaptopController {
     @PostMapping("/refresh")
     public ResponseEntity<Void> refreshAll() {
         repo.markAllAsIncomplete();
-        List<LaptopAukcja> scraped = scraper.getLaptops();
-        scraper.upsertScraped(scraped); // to edytowac zeby ozanczało compelted
+
+        List<LaptopAukcja> scraped = new ArrayList<>();
+        scraped.addAll(scraper1.getLaptops());
+        scraped.addAll(scraper2.getLaptops());
+
+        scraper1.upsertScraped(scraped); // to edytowac zeby ozanczało compelted
         //scraper.removeStaleRecords(scraped); // to usunac
         repo.deleteByCompletedFalse();
         return ResponseEntity.ok().build();
@@ -46,9 +60,14 @@ public class LaptopController {
 
     /** Pobiera dane i zapisuje tylko nowe aukcje (krótka forma) */
     @Transactional
-    @GetMapping("/scrap")
+    @GetMapping("/scrapLinks")
     public List<LaptopAukcja> getLaptops() {
-        List<LaptopAukcja> scraped = scraper.getLaptops();
+        List<LaptopAukcja> scraped = new ArrayList<>();
+        System.out.println("Scrapowanie Laurem");
+        scraped.addAll(scraper1.getLaptops());
+        System.out.println("Scrapowanie Amso");
+        scraped.addAll(scraper2.getLaptops());
+        System.out.println("Scrapowanie Koniec");
 
         List<LaptopAukcjaJPA> newEntries = scraped.stream()
                 .filter(laptop -> !repo.existsByAuctionPage(laptop.auctionPage()))
@@ -130,7 +149,12 @@ public class LaptopController {
         }
 
         try {
-            LaptopAukcja result = scraper.scrapeLaptopDetails(url);
+            LaptopAukcja result = null;
+            if (url.contains("laurem.pl"))
+                result = scraper1.scrapeLaptopDetails(url);
+            else if (url.contains("amso.pl"))
+                result = scraper2.scrapeLaptopDetails(url);
+
             if (result == null) {
                 throw new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
@@ -163,7 +187,14 @@ public class LaptopController {
         // 2. Dla każdego wywołaj scraper i zaktualizuj pola
         List<LaptopAukcjaJPA> updated = toComplete.stream().map(entity -> {
             try {
-                LaptopAukcja details = scraper.scrapeLaptopDetails(entity.getAuctionPage());
+                String url = entity.getAuctionPage();
+
+                LaptopAukcja details = null;
+                if (url.contains("laurem.pl"))
+                    details = scraper1.scrapeLaptopDetails(url);
+                else if (url.contains("laurem.pl"))
+                    details = scraper2.scrapeLaptopDetails(url);
+
                 if (details != null) {
                     entity.setManufacturer(details.manufacturer());
                     entity.setModel(details.model());

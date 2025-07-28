@@ -33,4 +33,32 @@ public class LaptopMapper {
         trg.setCreatedAt(LocalDateTime.now());
         return trg;
     }
+
+    public static LaptopAukcja mapEntityToDto(LaptopAukcjaJPA src) {
+        if (src == null) {
+            return null;
+        }
+        return new LaptopAukcja(
+                src.getId() != null ? src.getId().toString() : null, // konwersja Long -> String
+                src.getAuctionPage(),
+                src.getAuctionTitle(),
+                src.getManufacturer(),
+                src.getModel(),
+                src.getPrice(),
+                src.getItemCondition(),
+                src.getRamAmount(),
+                src.getDiskType(),
+                src.getDiskSize(),
+                src.getCpuModel(),
+                src.getCpuFrequencyGHz(),
+                src.getCpuCores(),
+                src.getScreenType(),
+                src.getTouchScreen(),
+                src.getScreenSizeInches(),
+                src.getResolution(),
+                src.getGraphics(),
+                src.getOperatingSystem()
+        );
+    }
+
 }
