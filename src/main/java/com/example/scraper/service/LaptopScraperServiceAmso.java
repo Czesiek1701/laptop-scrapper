@@ -97,7 +97,7 @@ public class LaptopScraperServiceAmso extends LaptopScraperService {
                 String value = Optional.ofNullable(row.selectFirst("#dictionary__values span"))
                         .map(Element::text)
                         .map(String::trim)
-                        .orElse("N/A");
+                        .orElse("N/A ");
 
                 switch (label) {
                     case "Model"                    -> laptop.setModel(value);
