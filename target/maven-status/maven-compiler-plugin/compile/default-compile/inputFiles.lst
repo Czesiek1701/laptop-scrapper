@@ -1,11 +1,11 @@
-C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\service\LaptopScraperLaurem.java
 C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\ScraperApplication.java
+C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\controller\TestHelloController.java
 C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\Main\Java\App.java
-C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\controller\HelloController.java
 C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\controller\LaptopController.java
-C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\controller\LaptopJPAController.java
+C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\service\LauremLaptopScraperService.java
+C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\controller\TestLaptopJPAController.java
 C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\repository\LaptopAukcjaRepository.java
+C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\service\LauremSiteScraperService.java
 C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\model\LaptopAukcja.java
 C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\MavenWrapperDownloader.java
-C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\service\LauremScraperService.java
 C:\Users\grzes\IdeaProjects\laptop-scrapper\src\main\java\com\example\scraper\model\LaptopAukcjaJPA.java

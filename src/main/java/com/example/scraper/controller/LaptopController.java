@@ -3,7 +3,7 @@ package com.example.scraper.controller;
 import com.example.scraper.model.LaptopAukcja;
 import com.example.scraper.model.LaptopAukcjaJPA;
 import com.example.scraper.repository.LaptopAukcjaRepository;
-import com.example.scraper.service.LaptopScraperLaurem;
+import com.example.scraper.service.LauremLaptopScraperService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -14,22 +14,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
 
 
 @RestController
 @RequestMapping("/api/laptops")
 public class LaptopController {
 
-    private final LaptopScraperLaurem scraper;
+    private final LauremLaptopScraperService scraper;
     private final LaptopAukcjaRepository repo;
 
-    public LaptopController(LaptopScraperLaurem scraper, LaptopAukcjaRepository repo) {
+    public LaptopController(LauremLaptopScraperService scraper, LaptopAukcjaRepository repo) {
         this.scraper = scraper;
         this.repo = repo;
     }
@@ -39,10 +33,11 @@ public class LaptopController {
     @PostMapping("/refresh")
     public ResponseEntity<Void> refreshAll() {
         List<LaptopAukcja> scraped = scraper.getLaptops();
-        upsertScraped(scraped);
-        removeStaleRecords(scraped);
+        scraper.upsertScraped(scraped);
+        scraper.removeStaleRecords(scraped);
         return ResponseEntity.ok().build();
     }
+
 
     /** Pobiera dane i zapisuje tylko nowe aukcje (krótka forma) */
     @Transactional
@@ -64,76 +59,17 @@ public class LaptopController {
         return scraped;
     }
 
+
     /** Zapisuje pełne dane laptopów (z listy) */
     @Transactional
     @PostMapping("/save")
     public ResponseEntity<String> saveLaptops(@RequestBody List<LaptopAukcja> laptops) {
         List<LaptopAukcjaJPA> entities = laptops.stream()
-                .map(this::mapDtoToEntity)
+                .map(scraper::mapDtoToEntity)
                 .toList();
 
         repo.saveAll(entities);
         return ResponseEntity.ok("Laptopy zapisane: " + entities.size());
-    }
-
-    // --- Prywatne metody pomocnicze ---
-
-    private void upsertScraped(List<LaptopAukcja> scraped) {
-        Map<String, LaptopAukcjaJPA> existing = repo.findAll().stream()
-                .collect(Collectors.toMap(LaptopAukcjaJPA::getAuctionPage, e -> e));
-
-        LocalDateTime now = LocalDateTime.now();
-        List<LaptopAukcjaJPA> toSave = new ArrayList<>();
-
-        for (LaptopAukcja dto : scraped) {
-            LaptopAukcjaJPA entity = existing.getOrDefault(dto.auctionPage(), new LaptopAukcjaJPA());
-            mapDtoToEntity(dto, entity);
-            entity.setCompleted(true);
-            if (entity.getCreatedAt() == null) entity.setCreatedAt(now);
-            toSave.add(entity);
-        }
-
-        repo.saveAll(toSave);
-    }
-
-    private void removeStaleRecords(List<LaptopAukcja> scraped) {
-        Set<String> livePages = scraped.stream()
-                .map(LaptopAukcja::auctionPage)
-                .collect(Collectors.toSet());
-
-        List<LaptopAukcjaJPA> stale = repo.findAll().stream()
-                .filter(e -> !livePages.contains(e.getAuctionPage()))
-                .toList();
-
-        repo.deleteAll(stale);
-    }
-
-    private LaptopAukcjaJPA mapDtoToEntity(LaptopAukcja dto) {
-        LaptopAukcjaJPA entity = new LaptopAukcjaJPA();
-        return mapDtoToEntity(dto, entity);
-    }
-
-    private LaptopAukcjaJPA mapDtoToEntity(LaptopAukcja src, LaptopAukcjaJPA trg) {
-        trg.setAuctionPage(src.auctionPage());
-        trg.setAuctionTitle(src.auctionTitle());
-        trg.setManufacturer(src.manufacturer());
-        trg.setModel(src.model());
-        trg.setPrice(src.price());
-        trg.setItemCondition(src.condition());
-        trg.setRamAmount(src.ramAmount());
-        trg.setDiskType(src.diskType());
-        trg.setDiskSize(src.diskSize());
-        trg.setCpuModel(src.cpuModel());
-        trg.setCpuFrequencyGHz(src.cpuFrequencyGHz());
-        trg.setCpuCores(src.cpuCores());
-        trg.setScreenType(src.screenType());
-        trg.setTouchScreen(src.touchScreen());
-        trg.setScreenSizeInches(src.screenSizeInches());
-        trg.setResolution(src.resolution());
-        trg.setGraphics(src.graphics());
-        trg.setOperatingSystem(src.operatingSystem());
-        trg.setCreatedAt(LocalDateTime.now());
-        return trg;
     }
 
 
@@ -204,6 +140,7 @@ public class LaptopController {
             );
         }
     }
+
 
     /**
      * POST /api/laptops/complete
