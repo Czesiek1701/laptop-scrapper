@@ -87,19 +87,20 @@ public class LaptopScraperServiceAmso extends LaptopScraperService {
             );
 
             // Cechy
-            for (Element row : doc.select(".projector_desc_param_wrapper #projector_dictionary .dictionary__group" )) {
+            for (Element param : doc.select(".projector_desc_param_wrapper #projector_dictionary .dictionary__group" )) {
 
-                String label = Optional.ofNullable(row.selectFirst("#dictionary__name span"))
+                String label = Optional.ofNullable(param.selectFirst(".dictionary__name span"))
                         .map(Element::text)
                         .map(s -> s.replace(":", "").trim())
                         .orElse("N/A");
 
-                String value = Optional.ofNullable(row.selectFirst("#dictionary__values span"))
+                String value = Optional.ofNullable(param.selectFirst(".dictionary__value_txt"))
                         .map(Element::text)
                         .map(String::trim)
-                        .orElse("N/A ");
+                        .orElse("N/A");
 
                 switch (label) {
+                    case "Symbol"                   -> laptop.setModel(value);
                     case "Model"                    -> laptop.setModel(value);
                     case "Liczba rdzeni"            -> laptop.setCpuCores(value);
                     case "Taktowanie procesora"     -> laptop.setCpuFrequencyGHz(value);

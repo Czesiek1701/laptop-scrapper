@@ -51,7 +51,9 @@ public class LaptopController {
         scraped.addAll(scraper1.getLaptops());
         scraped.addAll(scraper2.getLaptops());
 
-        scraper1.upsertScraped(scraped); // to edytowac zeby ozanczało compelted
+        scraper1.upsertScraped(scraped);
+        scraper2.upsertScraped(scraped);
+
         //scraper.removeStaleRecords(scraped); // to usunac
         repo.deleteByCompletedFalse();
         return ResponseEntity.ok().build();
@@ -192,7 +194,7 @@ public class LaptopController {
                 LaptopAukcja details = null;
                 if (url.contains("laurem.pl"))
                     details = scraper1.scrapeLaptopDetails(url);
-                else if (url.contains("laurem.pl"))
+                else if (url.contains("amso.pl"))
                     details = scraper2.scrapeLaptopDetails(url);
 
                 if (details != null) {
