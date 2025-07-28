@@ -4,6 +4,7 @@ import com.example.scraper.model.LaptopAukcja;
 import com.example.scraper.model.LaptopAukcjaJPA;
 import com.example.scraper.repository.LaptopAukcjaRepository;
 import com.example.scraper.service.LauremLaptopScraperService;
+import com.example.scraper.model.LaptopMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -22,19 +23,23 @@ public class LaptopController {
 
     private final LauremLaptopScraperService scraper;
     private final LaptopAukcjaRepository repo;
+//    private final LaptopMapper laptopMapper;
 
     public LaptopController(LauremLaptopScraperService scraper, LaptopAukcjaRepository repo) {
         this.scraper = scraper;
         this.repo = repo;
+//        this.laptopMapper = laptopMapper;
     }
 
     /** Odświeża dane: scrap + upsert + usuwanie starych */
     @Transactional
     @PostMapping("/refresh")
     public ResponseEntity<Void> refreshAll() {
+        repo.markAllAsIncomplete();
         List<LaptopAukcja> scraped = scraper.getLaptops();
-        scraper.upsertScraped(scraped);
-        scraper.removeStaleRecords(scraped);
+        scraper.upsertScraped(scraped); // to edytowac zeby ozanczało compelted
+        //scraper.removeStaleRecords(scraped); // to usunac
+        repo.deleteByCompletedFalse();
         return ResponseEntity.ok().build();
     }
 
@@ -65,7 +70,7 @@ public class LaptopController {
     @PostMapping("/save")
     public ResponseEntity<String> saveLaptops(@RequestBody List<LaptopAukcja> laptops) {
         List<LaptopAukcjaJPA> entities = laptops.stream()
-                .map(scraper::mapDtoToEntity)
+                .map(LaptopMapper::mapDtoToEntity)
                 .toList();
 
         repo.saveAll(entities);

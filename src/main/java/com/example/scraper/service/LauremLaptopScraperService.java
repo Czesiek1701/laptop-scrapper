@@ -3,6 +3,8 @@ package com.example.scraper.service;
 import com.example.scraper.model.LaptopAukcja;
 import com.example.scraper.model.LaptopAukcjaJPA;
 import com.example.scraper.repository.LaptopAukcjaRepository;
+
+import com.example.scraper.model.LaptopMapper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -54,15 +56,6 @@ public class LauremLaptopScraperService {
             System.err.println(">>> Błąd przy pobieraniu listy: " + e.getMessage());
         }
         return out;
-    }
-
-    private static String cleanUnits(String value) {
-        return value
-                .replaceAll("(\\d+),(\\d+)\\s*GHz", "$1.$2 GHz")     // zamiana przecinków na kropki w GHz
-                .replaceAll("(\\d+)\\s*GB\\s*GB", "$1 GB")           // usunięcie duplikatów GB
-                .replaceAll("(\\d+)\\\"\\s*[”\"]?", "$1\"")          // uporządkowanie znaków cali
-                .replaceAll("\\s+", " ")                             // usunięcie zbędnych spacji
-                .trim();
     }
 
 
@@ -211,12 +204,15 @@ public class LauremLaptopScraperService {
         }
     }
 
+
     private String extractProductIdFromUrl(String url) {
         Matcher m = Pattern.compile("-(\\d+)\\.html$").matcher(url);
         return m.find() ? m.group(1) : "0";
     }
 
+
     public void upsertScraped(List<LaptopAukcja> scraped) {
+        // Mapowanie istniejących rekordów z bazy po auctionPage
         Map<String, LaptopAukcjaJPA> existing = repo.findAll().stream()
                 .collect(Collectors.toMap(LaptopAukcjaJPA::getAuctionPage, e -> e));
 
@@ -224,54 +220,48 @@ public class LauremLaptopScraperService {
         List<LaptopAukcjaJPA> toSave = new ArrayList<>();
 
         for (LaptopAukcja dto : scraped) {
+            // Znajdź istniejący rekord lub utwórz nowy
             LaptopAukcjaJPA entity = existing.getOrDefault(dto.auctionPage(), new LaptopAukcjaJPA());
-            mapDtoToEntity(dto, entity);
+
+            // Zmapuj dane DTO do encji
+            LaptopMapper.mapDtoToEntity(dto, entity);
+
+            // Oznacz jako "kompletne" i ustaw datę utworzenia, jeśli brak
             entity.setCompleted(true);
             if (entity.getCreatedAt() == null) entity.setCreatedAt(now);
+
             toSave.add(entity);
         }
 
+        // Zapisz wszystkie nowe/zmodyfikowane encje do bazy
         repo.saveAll(toSave);
     }
 
+
     public void removeStaleRecords(List<LaptopAukcja> scraped) {
+        // Zbierz wszystkie aktualne strony aukcji z nowych danych
         Set<String> livePages = scraped.stream()
                 .map(LaptopAukcja::auctionPage)
                 .collect(Collectors.toSet());
 
+        // Filtruj rekordy, które już nie istnieją w najnowszym scrape
         List<LaptopAukcjaJPA> stale = repo.findAll().stream()
                 .filter(e -> !livePages.contains(e.getAuctionPage()))
                 .toList();
 
+        // Usuń nieaktualne rekordy z bazy
         repo.deleteAll(stale);
     }
 
-    public LaptopAukcjaJPA mapDtoToEntity(LaptopAukcja dto) {
-        LaptopAukcjaJPA entity = new LaptopAukcjaJPA();
-        return mapDtoToEntity(dto, entity);
-    }
 
-    public LaptopAukcjaJPA mapDtoToEntity(LaptopAukcja src, LaptopAukcjaJPA trg) {
-        trg.setAuctionPage(src.auctionPage());
-        trg.setAuctionTitle(src.auctionTitle());
-        trg.setManufacturer(src.manufacturer());
-        trg.setModel(src.model());
-        trg.setPrice(src.price());
-        trg.setItemCondition(src.condition());
-        trg.setRamAmount(src.ramAmount());
-        trg.setDiskType(src.diskType());
-        trg.setDiskSize(src.diskSize());
-        trg.setCpuModel(src.cpuModel());
-        trg.setCpuFrequencyGHz(src.cpuFrequencyGHz());
-        trg.setCpuCores(src.cpuCores());
-        trg.setScreenType(src.screenType());
-        trg.setTouchScreen(src.touchScreen());
-        trg.setScreenSizeInches(src.screenSizeInches());
-        trg.setResolution(src.resolution());
-        trg.setGraphics(src.graphics());
-        trg.setOperatingSystem(src.operatingSystem());
-        trg.setCreatedAt(LocalDateTime.now());
-        return trg;
+
+    private static String cleanUnits(String value) {
+        return value
+                .replaceAll("(\\d+),(\\d+)\\s*GHz", "$1.$2 GHz")     // zamiana przecinków na kropki w GHz
+                .replaceAll("(\\d+)\\s*GB\\s*GB", "$1 GB")           // usunięcie duplikatów GB
+                .replaceAll("(\\d+)\\\"\\s*[”\"]?", "$1\"")          // uporządkowanie znaków cali
+                .replaceAll("\\s+", " ")                             // usunięcie zbędnych spacji
+                .trim();
     }
 
 }

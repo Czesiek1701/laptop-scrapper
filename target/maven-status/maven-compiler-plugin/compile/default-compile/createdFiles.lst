@@ -1,3 +1,4 @@
+com\example\scraper\model\LaptopMapper.class
 com\example\scraper\service\LauremSiteScraperService.class
 com\example\scraper\model\LaptopAukcjaJPA.class
 com\example\scraper\ScraperApplication.class
