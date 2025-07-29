@@ -9,6 +9,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
+import java.util.stream.Collectors;
+
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -134,8 +136,30 @@ public class LaptopScraperServiceAmso extends LaptopScraperService {
                     case "Model karty graficznej"      -> laptop.setGraphics(value);
                     case "System operacyjny"           -> laptop.setOperatingSystem(value);
                     case "Stan techniczny"             -> laptop.setItemCondition(value);
+                    case "Multimedia"                   -> {
+                        List<String> multimediaItems =
+                            param.select(".dictionary__value_txt")      // wybierz wysztskie elementy klasy d__v.txt z param
+                                    .stream()                    // do przetwarzania danych
+                                    .map(Element::text)         // czyszczenie z tagów
+                                    .map(String::trim)          // czyszczenie z nadmiarowych spacji
+                                    .collect(Collectors.toList());      // do List<String>
+                        laptop.setMultimedia(
+                                String.join("\n", multimediaItems)      // setter
+                        );
+                    }
                 }
             }
+
+//            Element param = doc.selectFirst(".projector_desc_param_wrapper #projector_dictionary .dictionary__param");
+//            List<String> multimediaItems =
+//                    param.select(".dictionary__value_txt")      // wybierz wysztskie elementy klasy d__v.txt z param
+//                            .stream()                    // do przetwarzania danych
+//                            .map(Element::text)         // czyszczenie z tagów
+//                            .map(String::trim)          // czyszczenie z nadmiarowych spacji
+//                            .collect(Collectors.toList());      // do List<String>
+//            laptop.setMultimedia(
+//                    String.join("\n", multimediaItems)      // setter
+//            );
 
             // Cena
             laptop.setPrice(

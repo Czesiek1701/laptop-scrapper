@@ -28,6 +28,7 @@ public class LaptopMapper {
         trg.setGraphics(src.graphics());
         trg.setOperatingSystem(src.operatingSystem());
         trg.setCreatedAt(LocalDateTime.now());
+        trg.setMultimedia(src.multimedia());
         return trg;
     }
 
@@ -54,7 +55,8 @@ public class LaptopMapper {
                 src.getScreenSizeInches(),
                 src.getResolution(),
                 src.getGraphics(),
-                src.getOperatingSystem()
+                src.getOperatingSystem(),
+                src.getMultimedia()
         );
     }
 
