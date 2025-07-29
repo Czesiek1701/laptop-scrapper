@@ -3,7 +3,6 @@ package com.example.scraper.controller;
 import com.example.scraper.model.LaptopAukcja;
 import com.example.scraper.model.LaptopAukcjaJPA;
 import com.example.scraper.repository.LaptopAukcjaRepository;
-import com.example.scraper.service.LaptopScraperService;
 import com.example.scraper.service.LaptopScraperServiceLaurem;
 import com.example.scraper.service.LaptopScraperServiceAmso;
 import com.example.scraper.model.LaptopMapper;
@@ -103,28 +102,8 @@ public class LaptopController {
     @GetMapping("/readfromDB")
     public List<LaptopAukcja> readFromDB() {
         return repo.findAll().stream()
-            .map(entity -> new LaptopAukcja(
-                    String.valueOf(entity.getId()),
-                    entity.getAuctionPage(),         // link do aukcji
-                    entity.getAuctionTitle(),        // tytuł aukcji
-                    entity.getManufacturer(),        // producent
-                    entity.getModel(),               // model
-                    entity.getPrice(),
-                    entity.getItemCondition(),       // stan
-                    entity.getRamAmount(),           // RAM
-                    entity.getDiskType(),            // typ dysku
-                    entity.getDiskSize(),            // pojemność dysku
-                    entity.getCpuModel(),            // CPU
-                    entity.getCpuFrequencyGHz(),     // taktowanie
-                    entity.getCpuCores(),            // liczba rdzeni
-                    entity.getScreenType(),          // typ ekranu
-                    entity.getTouchScreen(),         // ekran dotykowy
-                    entity.getScreenSizeInches(),    // przekątna
-                    entity.getResolution(),          // rozdzielczość
-                    entity.getGraphics(),            // grafika
-                    entity.getOperatingSystem()      // system operacyjny
-            ))
-            .toList();
+                .map(LaptopMapper::mapEntityToDto)
+                .toList();
     }
 
 
@@ -198,26 +177,10 @@ public class LaptopController {
                     details = scraper2.scrapeLaptopDetails(url);
 
                 if (details != null) {
-                    entity.setManufacturer(details.manufacturer());
-                    entity.setModel(details.model());
-                    entity.setPrice(details.price());
-                    entity.setAuctionTitle(details.auctionTitle());
-                    entity.setItemCondition(details.condition());
-                    entity.setRamAmount(details.ramAmount());
-                    entity.setDiskType(details.diskType());
-                    entity.setDiskSize(details.diskSize());
-                    entity.setCpuModel(details.cpuModel());
-                    entity.setCpuFrequencyGHz(details.cpuFrequencyGHz());
-                    entity.setCpuCores(details.cpuCores());
-                    entity.setScreenType(details.screenType());
-                    entity.setTouchScreen(details.touchScreen());
-                    entity.setScreenSizeInches(details.screenSizeInches());
-                    entity.setResolution(details.resolution());
-                    entity.setGraphics(details.graphics());
-                    entity.setOperatingSystem(details.operatingSystem());
-                    entity.setCreatedAt(java.time.LocalDateTime.now());
+                    LaptopMapper.mapDtoToEntity(details, entity);
                     entity.setCompleted(true);
                 }
+
             } catch (Exception e) {
                 // loguj błąd i nie przerwij całej operacji
                 System.err.println("Błąd przy uzupełnianiu: " + e.getMessage());

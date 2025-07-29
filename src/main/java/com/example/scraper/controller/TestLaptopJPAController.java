@@ -1,3 +1,5 @@
+// encja Spring
+
 package com.example.scraper.controller;
 
 import com.example.scraper.model.LaptopAukcjaJPA;

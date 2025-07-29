@@ -1,8 +1,5 @@
 package com.example.scraper.model;
 
-import com.example.scraper.model.LaptopAukcja;
-import com.example.scraper.model.LaptopAukcjaJPA;
-
 import java.time.LocalDateTime;
 
 public class LaptopMapper {
