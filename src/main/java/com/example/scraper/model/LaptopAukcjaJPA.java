@@ -37,7 +37,6 @@ public class LaptopAukcjaJPA {
     private String resolution;
     private String graphics;
     private String operatingSystem;
-    private String multimedia;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -67,7 +66,6 @@ public class LaptopAukcjaJPA {
         this.graphics = "N/A";
         this.operatingSystem = "N/A";
         this.createdAt = null;
-        this.multimedia = "N/A";
     }
 
 
@@ -105,14 +103,6 @@ public class LaptopAukcjaJPA {
 
     public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
-    }
-
-    public String getMultimedia() {
-        return multimedia;
-    }
-
-    public void setMultimedia(String multi) {
-        this.multimedia = multi;
     }
 
     public String getModel() {

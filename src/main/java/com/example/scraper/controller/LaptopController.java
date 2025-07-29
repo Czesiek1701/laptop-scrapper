@@ -44,7 +44,7 @@ public class LaptopController {
     @Transactional
     @PostMapping("/refresh")
     public ResponseEntity<Void> refreshAll() {
-        repo.markAllAsIncomplete();         //
+        repo.markAllAsIncomplete();
 
         List<LaptopAukcja> scraped = new ArrayList<>();
         scraped.addAll(scraper1.getLaptops());
